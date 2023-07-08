@@ -4,7 +4,7 @@
 (fill in your description and goals here)
 
 ## Process
-### (your step 1)
+### (Following Part 1 in the assignment.md file, a new PostgreSQL database called `ecommerce` was created.)
 ### (your step 2)
 
 ## Results
