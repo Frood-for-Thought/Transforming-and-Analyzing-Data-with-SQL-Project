@@ -27,7 +27,7 @@ ORDER BY table_name, ordinal_position;
 
 - First the column data types needed to be matched to the quality of data they held
 
--- Reformat the date with the option of text
+-- The date can be reformatted with the option of text.
 SELECT date, CONCAT(LEFT(date::text, 4),'-',SUBSTRING(date::text, 5, 2),'-',RIGHT(date::text, 2)) AS date_text,
 	TO_DATE(date::text, 'YYYYMMDD')
 FROM analytics
@@ -63,25 +63,56 @@ ALTER TABLE analytics
 ALTER COLUMN visitstarttime TYPE timestamp
 USING TO_TIMESTAMP(visitstarttime);
 
-
-
 --
--- The following query shows there are productsku's in sales_by_skew,
--- however the same product skews are not in the products table.
-SELECT *
-FROM products pro
-RIGHT JOIN sales_by_sku sbs
-ON pro.sku = sbs.productsku
-WHERE pro.sku is null;
--- The same is true with the sales_report table.
-SELECT *
-FROM sales_report sr
-RIGHT JOIN sales_by_sku sbs
-USING(productsku)
-WHERE sr.productsku IS NULL;
--- So there are unique values in sales_by_skew which are not in the tables products or sales_report.
+-- The following query shows there are unique values in sales_by_skew which are not in the tables products or sales_report.
 -- The table should not be deleted because of this but it should be deleted after preserving those values.
 -- This one-to-one table seems redundant and everything could be placed into the sales_report table.
 -- Products should get a unique products key and not the sku column, while sales_report should get a sales key.
 -- In this case, for now sales_report can have productsku as its primary key which link to all_sessions productsku
 -- as a foreign key.
+SELECT sbs.productsku, sbs.total_ordered
+FROM products as pro
+RIGHT JOIN sales_by_sku as sbs
+	ON pro.sku = sbs.productsku
+LEFT JOIN sales_report as sr
+	USING(productsku)
+WHERE pro.sku is null AND sr.productsku IS NULL;
+
+-- the character limit in all the sku columns was shortened to 20.
+
+-- v2productname can be shortened to 100 characters.
+SELECT COUNT(v2productname)
+FROM all_sessions
+WHERE LENGTH(v2productname) > 100;
+
+-- Reveiwing the format of v2productname to make sure they are capitalized at the start
+-- or start with a number.  The remaining products start with two capitals.
+SELECT v2productname, COUNT(v2productname)
+FROM all_sessions
+GROUP BY v2productname
+HAVING v2productname NOT IN (
+	SELECT v2productname
+	FROM all_sessions
+	WHERE LEFT(v2productname, 1) ~ '[1-9]'
+	OR v2productname ~ E'^[[:upper:]][^[:upper:]]');
+-- The CTE adds up all the products with the right format to 15134,
+-- which adds to the same count of rows in v2productname.
+-- Therefore all rows have proper format at the start.
+WITH count_table AS (
+	SELECT COUNT(v2productname) AS number_of_products
+	FROM all_sessions
+	WHERE LEFT(v2productname, 1) ~ '[1-9]'
+	OR v2productname ~ E'^[[:upper:]][^[:upper:]]'
+	UNION ALL
+	SELECT COUNT(v2productname)
+	FROM all_sessions
+	WHERE v2productname NOT IN (
+		SELECT v2productname
+		FROM all_sessions
+		WHERE LEFT(v2productname, 1) ~ '[1-9]'
+		OR v2productname ~ E'^[[:upper:]][^[:upper:]]')
+	)
+SELECT SUM(number_of_products)
+FROM count_table;
+
+

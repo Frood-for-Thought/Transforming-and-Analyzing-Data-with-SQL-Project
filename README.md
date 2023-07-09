@@ -24,7 +24,7 @@ Note: make sure the program is in the same location as the table files to read f
 
 - Divide the unit_price by 1000000
 
--- date column reformatted in analytics and all_sessions tables.
+-- date column reformatted in analytics and all_sessions tables.  For full detail on what was done real the cleaning_data file.
 
 -- Test if conversion to big_int is allowable for fullvisitorid without losing unique IDs for analytics and all_sessions tables.
 -- Reformatted fullvisitorid in tables analytics and all_sessions.
@@ -42,6 +42,62 @@ Note: make sure the program is in the same location as the table files to read f
 -- Check if negative values are gone in units_sold.
 
 -- The pageviews need to be converted to an int.
+-- The transactionrevenue column is redundant in all_sessions and all the information in totaltransactionrevenue.
+-- The data is preserved in totaltransactionrevenue after removing the transactionrevenue column.
+-- Remove the brackets and 'not available in demo ...' from the city column in all_sessions.
+-- totaltransactionrevenue is divided by 1000000.
+-- no values of totaltransactionrevenue is less than 0.
+-- transactions is either 1 or NULL so it is converted from float to integer.
+-- Alter time in all_sessions to a time interval.
+-- Alter timeonsite in all_sessions to a time interval.
+-- sessionqualitydim have whole numbers so they are converted to int.
+-- all_sessions, type column looks like a boolean but the character titles may still retain some 
+-- important information.  The VARCHAR was limited to 10 characters.
+-- productrefundamount is only null but may still be important later if refunds are given.
+-- divide productprice by 1000000.
+-- no values of productprice is less than 0.
+-- There was an error with the time and timeonsite, but the values are still preseverd on the all_sessions_time table.
+-- A query is created in cleaning_data to match up the all_sessions_time.time, all_sessions_time.timeonsite, 
+-- all_sessions_date_time.date, analytics.visitstarttime USING(visitid).
+-- productrevenue is divided by 1000000.
+-- no values of productrevenue is less than 0.
+-- all revenue contains valid decimal or integer values.
+
+-- A query shows there are unique values in sales_by_skew which are not in the tables products or sales_report.
+-- The table should not be deleted because of this but it should be deleted after preserving those values.
+-- This one-to-one table seems redundant and everything could be placed into the sales_report table.
+-- Products should get a unique products key and not the sku column, while sales_report should get a sales key.
+-- In this case, for now sales_report can have productsku as its primary key which link to all_sessions productsku
+-- as a foreign key.
+-- the character limit in all the columns with sku was shortened to 20.
+
+-- v2productname can be shortened to 100 characters.
+-- Reveiwing the format of v2productname to make sure they are capitalized at the start
+-- or start with a number.  The remaining products start with two capitals.
+-- A CTE to add up all the products with the right format,
+-- adds to the same count of rows in v2productname.
+-- Therefore all rows have proper format at the start.
+-- Removed the (not set) category from v2productcategory.
+-- Removed missing title from v2productcategory.
+-- Removed slashes from v2productcategory.
+-- Removed single option only and (not set) from productvarient and lower characters to 10.
+-- Character length was decreased to 10 in currencycode.
+-- itemquantity was changed to int and values were left NULL.
+-- transactionid character length was decreased to 20.
+-- A value longer than 100 characters was removed from pagetitle.
+-- pagetitle was set to 100 characters.
+-- seachkeyword as altered to VARCHAR(20) from real.
+-- ecommerceaction_option was set to 20 characters in lenght.
+
+-- Remove leading spaces in products.name using trim.
+-- I am unsure of the scoring in the sentiment score, if the negative values are
+-- necessary.  The score was converted to a scale betwen 0 and 100.
+-- The column was then converted to an integer value.
+-- All the numeric values are in valid numeric format.
+-- All the rows are preserved testing each numeric range.
+
+-- Remove leading spaces in sales_report.name using trim.
+-- sentimentscore in sales_report was altered the same method used in the products table.
 
 ## Results
 (fill in what you discovered this data could tell you and how you used the data to answer those questions)
