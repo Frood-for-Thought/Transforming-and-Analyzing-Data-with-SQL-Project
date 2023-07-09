@@ -7,8 +7,8 @@
 NOTE: Some cleaning_data and QA process notes are taken from the QA.md file and are also listed here in Process with a "-" in the front.
 
 Following Part 1 in the assignment.md file, a new PostgreSQL database called `ecommerce` was created.
-A program "read_table_column_name_and_type_function.py" was created to display each table column with their datatype;
-input exact file_name and type (c for .csv or x for .xlsx) and the program will list the column names and datatype.
+A program "read_table_column_name_and_type_function.py" was created to display each table column with their datatype.
+When running the program, input exact file_name and type "c" for .csv or "x" for .xlsx and the program will list the file's column names and their datatypes.
 Note: make sure the program is in the same location as the table files to read for it to work.
 
 (Parts of notes taken from QA Process or cleaning_data)
@@ -16,7 +16,8 @@ Note: make sure the program is in the same location as the table files to read f
 	- The pageTitle column in the all_sessions table needed to be extended to 600 characters in order to import the data,
 	needed to find area where pageTitle > 500 characters.
 - Column titles needed to be converted to lowercase for easier usage and so the queries tool can recognize the titles typed out after SELECT.
-	- A list of all each file's column names in lowercase was provided by the "read_table_column_name_and_type_function.py".
+	- A list of all each file's column names in lowercase was provided by the "read_table_column_name_and_type_function.py", 
+	so that the column names and data types could be known before being inserted into the table values in SQL.
 
 
 - In pgAdmin, list the column names, data types, character max length or number precision, if column is nullable, and if it is updateable.
