@@ -20,10 +20,10 @@ Note: make sure the program is in the same location as the table files to read f
 	so that the column names and data types could be known before being inserted into the table values in SQL.
 
 
-- In pgAdmin, list the column names, data types, character max length or number precision, if column is nullable, and if it is updateable.
+-- During QA, in pgAdmin, list the column names, data types, character max length or number precision, 
+-- if column is nullable, and if it is updateable.
 
-- Divide the unit_price by 1000000
-
+-- Divide the unit_price by 1000000 in cleaning_data.
 -- date column reformatted in analytics and all_sessions tables.  For full detail on what was done real the cleaning_data file.
 
 -- Test if conversion to big_int is allowable for fullvisitorid without losing unique IDs for analytics and all_sessions tables.
@@ -98,6 +98,26 @@ Note: make sure the program is in the same location as the table files to read f
 
 -- Remove leading spaces in sales_report.name using trim.
 -- sentimentscore in sales_report was altered the same method used in the products table.
+-- Removed (not set) from column country in table all_sessions.
+-- Restockingleadtime in the sales_report table was converted to a days interval.
+-- Divided revenue by 1000000.
+
+-- Verified there are no locations with cities without countries in all_sessions table for QA.
+-- During cleaning_data, found some cities which have more than one distinct country.  In some cases this could be true.
+-- Corrected city names and their locations, set city to country.
+-- London, US may mean London, Ohio.
+-- Paris, United States may mean Paris, TX.
+-- There is a Toronto and Vancouver in the United States.
+-- Set 'New York' to 'United States'.
+-- There is an Amsterdam in the United States.
+-- Hong Kong was set to China.
+-- Los Angeles was set to United States.
+-- Mexico City was set to Mexico.
+-- Mountain View was set to United States.
+-- San Francisco was set to United States.
+-- Singapore was set to Singapore.
+-- Yokohama was set to Japan.
+
 
 ## Results
 (fill in what you discovered this data could tell you and how you used the data to answer those questions)

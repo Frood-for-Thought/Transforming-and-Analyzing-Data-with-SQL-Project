@@ -66,7 +66,23 @@ What issues will you address by cleaning the data?
 
 -- Remove leading spaces in sales_report.name using trim.
 -- sentimentscore in sales_report was altered the same method used in the products table.
+-- Removed (not set) from column country in table all_sessions.
+-- Restockingleadtime in the sales_report table was converted to a days interval.
+-- Divided revenue by 1000000.
 
+-- Corrected city names and their locations, set city to country.
+-- London, US may mean London, Ohio.
+-- Paris, United States may mean Paris, TX.
+-- There is a Toronto and Vancouver in the United States.
+-- Set 'New York' to 'United States'.
+-- There is an Amsterdam in the United States.
+-- Hong Kong was set to China.
+-- Los Angeles was set to United States.
+-- Mexico City was set to Mexico.
+-- Mountain View was set to United States.
+-- San Francisco was set to United States.
+-- Singapore was set to Singapore.
+-- Yokohama was set to Japan.
 
 
 
@@ -304,3 +320,51 @@ SET name = TRIM(name);
 UPDATE sales_report
 SET sentimentscore = (ROUND(sentimentscore*100)+100)/2;
 ALTER TABLE sales_report ALTER sentimentscore TYPE int;
+
+-- Remove (not set) from column country in table all_sessions.
+UPDATE all_sessions
+SET country = NULL
+WHERE LOWER(country) LIKE '%(not set)%';
+
+-- restockingleadtime in the sales_report table was converted to a days interval.
+ALTER TABLE sales_report
+ALTER COLUMN restockingleadtime TYPE interval
+USING MAKE_INTERVAL(Days => restockingleadtime);
+
+-- divide revenue by 1000000.
+UPDATE analytics
+SET revenue = revenue/1000000;
+
+-- Corrected city names and their locations, set city to country.
+-- London, US may mean London, Ohio.
+-- Paris, United States may mean Paris, TX.
+-- There is a Toronto and Vancouver in the United States.
+-- Set 'New York' to 'United States'.
+-- There is an Amsterdam in the United States.
+
+-- Find cities which have more than one distinct country.  In some cases this could be true.
+SELECT city, COUNT(DISTINCT country)
+FROM all_sessions
+GROUP BY city
+HAVING COUNT(DISTINCT country) > 1
+AND city IS NOT NULL;
+-- This query is used to list which countries the city appeared in to cross reference if there is one.
+SELECT DISTINCT country, city
+FROM all_sessions
+WHERE city LIKE 'Bangkok';
+
+-- Find cities which have more than one distinct country.  In some cases this could be true.
+SELECT city, COUNT(DISTINCT country)
+FROM all_sessions
+GROUP BY city
+HAVING COUNT(DISTINCT country) > 1
+AND city IS NOT NULL;
+-- Corrected city names and their locations, set city to country.
+-- This query is used to list which countries the city appeared in to cross reference if there is one.
+SELECT DISTINCT country, city
+FROM all_sessions
+WHERE city LIKE 'city_name';
+-- The query is used to update the city with their country if there should only be a single one.
+UPDATE all_sessions
+SET country = 'country_name'
+WHERE city LIKE 'city_name';

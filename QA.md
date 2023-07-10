@@ -13,7 +13,7 @@ Describe your QA process and include the SQL queries used to execute it.
 
 - Go through Data Validation for each table.
 
-- In pgAdmin, list the column names, data types, character max length or number precision, if column is nullable, and if it is updateable.
+-- In pgAdmin, list the column names, data types, character max length or number precision, if column is nullable, and if it is updateable.
 SELECT table_name, column_name, ordinal_position, data_type, 
 	CASE 
 		WHEN LOWER(data_type) LIKE '%character%'
@@ -115,4 +115,7 @@ WITH count_table AS (
 SELECT SUM(number_of_products)
 FROM count_table;
 
-
+-- The following query shows there are no location with cities without countries in all_sessions.
+SELECT visitid, country, city, totaltransactionrevenue
+FROM all_sessions
+WHERE country IS NULL AND city IS NOT NULL;
