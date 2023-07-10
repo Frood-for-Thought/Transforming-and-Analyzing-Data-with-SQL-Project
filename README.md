@@ -119,6 +119,9 @@ Note: make sure the program is in the same location as the table files to read f
 -- Yokohama was set to Japan.
 
 The starting_with_questions were answered after cleaning_data and some QA.
+-- Some of the v2productname and v2productcategory errors and inconsistencies were cleaned during the starting_with_questions.
+-- (You Tube -> YouTube, Earbud -> Earbuds, etc.)
+
 
 ## Results
 (fill in what you discovered this data could tell you and how you used the data to answer those questions)

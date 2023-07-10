@@ -223,13 +223,10 @@ update_product_name_cat_list AS (
 			OR LOWER(v2productname) LIKE '%men%'
 			OR LOWER(v2productname) LIKE '%women%'
 			OR LOWER(v2productname) LIKE '%glasses%'
-			OR LOWER(v2productname) LIKE '%hat%'
 				THEN 'Apparel'
 			WHEN LOWER(v2productname) LIKE '%bottle%'
 				THEN 'Bottle'
 			WHEN LOWER(v2productname) LIKE '%mug%'
-			OR LOWER(v2productname) LIKE '%tumbler%'
-			OR LOWER(v2productname) LIKE '%screen cleaning%'
 				THEN 'Drinkware'
 			WHEN LOWER(v2productname) LIKE '%baby%'
 			OR LOWER(v2productname) LIKE '%bib%'
@@ -240,7 +237,6 @@ update_product_name_cat_list AS (
 			WHEN LOWER(v2productname) LIKE '%android%' 
 			OR LOWER(v2productname) LIKE '%flashlight%'
 			OR LOWER(v2productname) LIKE '%mouse%'
-			OR LOWER(v2productname) LIKE '%flashlight%'
 			OR LOWER(v2productname) LIKE '%charger%'
 			OR LOWER(v2productname) LIKE '%power%'
 			OR LOWER(v2productname) LIKE '%bluetooth%'
@@ -310,14 +306,17 @@ GROUP BY product_category;
 
 Answer:
 
-The most times a product category was ordered was in the united states and was a Waze category with it being the most purchased at 653414 times, 
-followed by the Sale category at 652082 times.  The country with the least times a product category was ordered was Malta with Apparel being 
-ordered 5 times.  The most popular category in the first 7 countries was Waze, however, Office appeared 64 times over all the countries,
-while Wase only appeared 31 times.
 
-The most times a product category was ordered in a city was in Mountain View, (not including NULL in the answer), with the category being Sale,
-and the number of times it was purchased being 73671.  Like in the country table, Office appeared the most, (39 times), while
-Waze was second, appearing 29 times.
+
+The most times a product category was ordered was in the united states and was a YouTube category with it being the most purchased at 653414 times, 
+followed by the Waze category at 451542 times.  The country with the least times a product category was ordered was Slovakia with Android being 
+ordered 1 time.  The most popular category for all the counties was YouTube, appearing on the top of the list for 114 countries, and
+Google coming in second at 12 countries.
+
+The most times a product category was ordered in a city was in Mountain View, (not including NULL in the answer), with the category being YouTube,
+and the number of times it was purchased being 73671.  Waze was second, with 62140, even though it doesn't appear first in any cities.
+When dealing with sponsored product categories, Youtube showed up the most with it being the most popular category in 132 cities, 
+followed by Google with 16.
 
 
 
@@ -327,11 +326,149 @@ Waze was second, appearing 29 times.
 
 SQL Queries:
 
+-- Like in question 3, the v2 product names are grouped together but this time on 
+WITH product_name_list AS (
+	SELECT v2productname,
+	CASE
+--	This orders the products by sponsored names
+-- 		WHEN LOWER(v2productname) LIKE '%waze%'
+-- 			THEN 'Waze'
+-- 		WHEN LOWER(v2productname) LIKE '%google%'
+-- 			THEN 'Google'
+-- 		WHEN LOWER(v2productname) LIKE '%nest%'
+-- 			THEN 'Nest'
+-- 		WHEN LOWER(v2productname) LIKE '%youtube%'
+-- 		OR LOWER(v2productname) LIKE '%you tube%'
+-- 			THEN 'YouTube'
+-- 		WHEN LOWER(v2productname) LIKE '%android%'
+-- 			THEN 'Android'
+-- 		WHEN LOWER(v2productname) LIKE '%galaxy%'
+-- 			THEN 'Galaxy'
+		
+		WHEN LOWER(v2productname) LIKE '%bag%'
+		OR LOWER(v2productname) LIKE '%pack%'
+		OR LOWER(v2productname) LIKE '%backpack%'
+		OR LOWER(v2productname) LIKE '%pouch%'
+		OR LOWER(v2productname) LIKE '%sack%'
+		OR LOWER(v2productname) LIKE '%duffel%'
+			THEN 'Bag'
+		WHEN LOWER(v2productname) LIKE '%pen%'
+			THEN 'Pen'
+		WHEN LOWER(v2productname) LIKE '%journal%'
+			THEN 'Journal'
+		WHEN LOWER(v2productname) LIKE '%umbrella%'
+			THEN 'Umbrella'
+		WHEN LOWER(v2productname) LIKE '%hood%'
+		OR LOWER(v2productname) LIKE '%vest%' 
+		OR LOWER(v2productname) LIKE '%hoodie%'
+		OR LOWER(v2productname) LIKE '%sleeve%'
+		OR LOWER(v2productname) LIKE '%onesie%'
+		OR LOWER(v2productname) LIKE '%sweatshirt%'
+		OR LOWER(v2productname) LIKE '%pullover%'
+			THEN 'Sweater'
+		WHEN LOWER(v2productname) LIKE '%shirt%'
+		OR LOWER(v2productname) LIKE '%tee%'
+		OR LOWER(v2productname) LIKE '%polo%'
+		OR LOWER(v2productname) LIKE '%tank%'
+			THEN 'Shirt'
+		WHEN LOWER(v2productname) LIKE '%jacket%'
+			THEN 'Jacket'
+		WHEN LOWER(v2productname) LIKE '%hat%'
+		OR LOWER(v2productname) LIKE '%cap%'
+			THEN 'Hat'
+		WHEN LOWER(v2productname) LIKE '%glasses%'
+			THEN 'Glasses'
+		WHEN LOWER(v2productname) LIKE '%bottle%'
+		OR LOWER(v2productname) LIKE '%mug%'
+		OR LOWER(v2productname) LIKE '%cold tumbler%'
+			THEN 'Bottle or Mug'
+		WHEN LOWER(v2productname) LIKE '%flashlight%'
+			THEN 'Flashlight'
+		WHEN LOWER(v2productname) LIKE '%mouse%'
+			THEN 'Mouse'
+		WHEN LOWER(v2productname) LIKE '%charger%'
+			THEN 'Charger'
+		WHEN LOWER(v2productname) LIKE '%phone%'
+			THEN 'Phone'
+		WHEN LOWER(v2productname) LIKE '%speaker%'
+			THEN 'Speaker'
+		WHEN LOWER(v2productname) LIKE '%yoga%'
+			THEN 'Yoga Supplies'
+		WHEN LOWER(v2productname) LIKE '%dog toy%'
+		OR LOWER(v2productname) LIKE '%pet%'
+			THEN 'Pet Supplies'
+		WHEN LOWER(v2productname) LIKE '%sanitizer%'
+			THEN 'Sanitizer'
+		WHEN LOWER(v2productname) LIKE '%gift card%'
+			THEN 'Gift Cards'
+		WHEN LOWER(v2productname) LIKE '%earbuds%'
+		OR LOWER(v2productname) LIKE '%earbud%'
+			THEN 'Headphones'
+		WHEN LOWER(v2productname) LIKE '%camera%'
+			THEN 'Camera'
+		WHEN LOWER(v2productname) LIKE '%alarm%'
+			THEN 'Alarm'
+		WHEN LOWER(v2productname) LIKE '%decal%'
+		OR LOWER(v2productname) LIKE '%sticker%'
+			THEN 'Decal'
+		WHEN LOWER(v2productname) LIKE '%socks%'
+			THEN 'Socks'
+		WHEN LOWER(v2productname) LIKE '%bib%'
+			THEN 'Baby Accessories'
+	ELSE v2productname
+	END AS products
+	FROM all_sessions
+	),
+-- SELECT DISTINCT *
+-- FROM product_name_list;
 
+-- CTE to count the products sold per country and list them with a ranking
+country_pro_num_rank AS(
+	SELECT DISTINCT alls.country, pnl.products,
+		COUNT(pnl.products) 
+			OVER (PARTITION BY alls.country ORDER BY pnl.products) AS product_num_per_country,
+		DENSE_RANK() OVER (PARTITION BY alls.country ORDER BY pnl.products DESC) AS pro_rank_per_country
+	FROM all_sessions AS alls
+	JOIN product_name_list AS pnl
+	USING(v2productname)
+	WHERE pnl.products IS NOT NULL
+	ORDER BY product_num_per_country DESC
+	)
+
+SELECT DISTINCT products, COUNT(country)
+FROM country_pro_num_rank
+WHERE pro_rank_per_country = 1
+GROUP BY products;
+
+-- --  The CTE groups and orders the times a product was ordered with each city.
+-- city_product AS (
+-- 	SELECT DISTINCT alls.city, pnl.products,
+-- 		COUNT(pnl.products) 
+-- 			OVER (PARTITION BY alls.city ORDER BY pnl.products) AS product_num_per_city,
+-- 		DENSE_RANK() OVER (PARTITION BY alls.country ORDER BY pnl.products DESC) AS pro_rank_per_city
+-- 	FROM all_sessions AS alls
+-- 	JOIN product_name_list AS pnl
+-- 	USING(v2productname)
+-- 	WHERE alls.city IS NOT NULL
+-- 	)
+-- -- SELECT *
+-- -- FROM city_product
+-- -- ORDER BY product_num_per_city DESC;
+
+-- -- This lists the most popular category in each city.
+-- SELECT products, COUNT(city)
+-- FROM city_product
+-- WHERE pro_rank_per_city = 1
+-- GROUP BY products;
 
 Answer:
 
-
+The most popular product sold overall are 'Yoga Supplies' being ordered 589784 in the United States.  The next popular supplies after that
+were umbrellas, being sold 588886 times.  However, sweater products were the most popular in 82 countries while yoga supplies were 
+the second most popular, being 16 countries.  When not ordering the products sold by grouping the names, the most popular item was 
+YouTube Wool Heather Cap Heather/Black being the most popular in 30 countries.  This is followed with YouTube Youth Short Sleeve Tee Red,
+and YouTube Twill Cap being the most popular in 17 countries.  When not grouping the names of the orders sold, the most popular item
+sold per country was YouTube Youth Short Sleeve Tee Red with it being 653414 times sold in the United States.
 
 
 
@@ -339,11 +476,61 @@ Answer:
 
 SQL Queries:
 
+-- The CTE creates a column which defaults to the revenue of the analytics table, 
+-- or totaltransactionrevenue in all_sessions if the analytics value is NULL.
+-- It also gives values when the country column is not NULL.
+WITH visit_country_city_revenue AS (
+	SELECT 
+		visitid, 
+		CASE
+			WHEN an.revenue IS NULL
+				THEN alls.totaltransactionrevenue
+			ELSE an.revenue
+		END AS visitid_revenue,
+		alls.country, alls.city
+	FROM all_sessions AS alls
+	FULL OUTER JOIN analytics AS an
+		USING(visitid)
+	WHERE alls.country IS NOT NULL
+	),
+-- CTE to list the country and city, and to give the sum of revenue per country and city.
+country_city_rev_sum AS (
+	SELECT DISTINCT country, city,
+		SUM(visitid_revenue) OVER (PARTITION BY country) AS country_revenue,
+		SUM(visitid_revenue) OVER (PARTITION BY country, city) AS city_revenue,
+		SUM(visitid_revenue) OVER () AS total_overall_revenue
+	FROM visit_country_city_revenue AS vccr
+	WHERE city is not null
+	ORDER BY country, city
+	)
+-- -- This query orders the country with the highest level of transaction revenue on the site.
+-- SELECT *
+-- FROM country_city_rev_sum
+-- WHERE country_revenue IS NOT NULL
+-- ORDER BY country_revenue DESC;
 
+-- -- Find the percentage of revenue generated per country
+-- SELECT DISTINCT country, country_revenue, (country_revenue/total_overall_revenue)*100 as percent_total_revenue
+-- FROM country_city_rev_sum
+-- WHERE country_revenue IS NOT NULL;
+
+-- This query finds the city with its country with the highest level of transaction revenue on the site,
+-- and compares it as a percentage to the overall revenue generated.
+SELECT DISTINCT country, city, city_revenue AS revenue, (city_revenue/total_overall_revenue)*100 as percent_total_revenue
+FROM country_city_rev_sum
+WHERE city_revenue IS NOT NULL
+ORDER BY city_revenue DESC
 
 Answer:
 
-
+Frim the records for each country which are not null, it appears United States has 205475.11 of total revenue generated.
+This accounts for 99.32% of all the revenue generated per country.  The next is Israel with 0.307%, Australia with 0.173%,
+Switzerland with 0.156%, then Canada with 0.0397%.
+The city with the most revenue generated is Sunnyvale with 155620.72 which is 75.225% of the total revenue generated.  
+The next city being San Francisco, with 14509.47 generated, and it being 7.0137% of the revenue generated, followed by
+New York with 11861.57 and 5.734% revenue generated.  The three lowest were Columbus with 0.011%, Houston with 0.019%, and 
+Toronto with 0.040%
+There was a total of 19 cities which were recorded to generate revenue.
 
 
 
