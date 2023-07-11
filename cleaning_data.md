@@ -414,4 +414,10 @@ FROM new_dates AS nd
 WHERE na.visitid = nd.visitid
 AND na.fullvisitorid = nd.fullvisitorid;
 
+-- Update pageview in analytics.
+UPDATE new_analytics
+SET pageviews = alls.pageviews
+FROM all_sessions AS alls
+WHERE new_analytics.pageviews IS NULL;
+
 -- Spaces are removed in product_sku.

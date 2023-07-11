@@ -261,13 +261,55 @@ SELECT count(distinct visitid), count(distinct fullvisitorid)
 FROM new_analytics;
 -- Shows 159538 and 130345
 
+
+
 Question 4: 
+
+What is the total amount of pageviews per country/city, is there a correlation with the start time?
 
 SQL Queries:
 
+-- Calculate the total number of pageviews per fullvisitorid.
+WITH fullvisitor_pageviews AS (
+	SELECT fullvisitorid, SUM(pageviews) AS totalpageviews
+	FROM new_analytics
+	GROUP BY fullvisitorid
+	),
+-- Use the CTE to match the fullvisitorid with their
+-- countries and cities and with their local time and pageviews.
+country_city_time_views AS (
+SELECT DISTINCT
+	alls.country, alls.city, 
+	na.visitstarttime::time as time, 
+	fp.totalpageviews AS pageviews
+FROM fullvisitor_pageviews AS fp
+JOIN all_sessions AS alls
+USING(fullvisitorid)
+JOIN new_analytics AS na
+USING(visitid)
+	)
+
+-- Group the country up with the total pageviews and average start time of viewing,
+-- (relative to the time-zone).
+-- Cities were also grouped by the same query.
+SELECT country, 
+AVG(time) AS average_start_time, 
+SUM(pageviews) AS total_pageviews
+FROM country_city_time_views
+WHERE country IS NOT NULL
+GROUP BY country
+ORDER BY SUM(pageviews) DESC, AVG(time) DESC;
+
 Answer:
 
+The country with the maximum number of pageviews is the United States, while the average local start time is 14:05:13.
+There was no correlation with start time and pageviews.
 
+Compared to question 2, Mountain View has the most traffic, with 10246 pageviews, however, it looks like Sunnyvale has
+generated more revenue with fewer pageviews, being 8207.
+
+What should be noted, is that there were 265 cities with pageviews, however, only 32 cities were recorded to make purchases.
+Most pageviews go to cities unaccounted for, with 56214 being NULL.
 
 Question 5: 
 
