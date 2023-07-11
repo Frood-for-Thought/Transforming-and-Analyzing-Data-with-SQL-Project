@@ -118,6 +118,13 @@ Note: make sure the program is in the same location as the table files to read f
 -- Singapore was set to Singapore.
 -- Yokohama was set to Japan.
 
+-- Duplicate rows are removed from analytics.
+-- Find the distinct visits where the units sold is NULL.  With this the unit price can be changed to NULL in order
+-- to remove duplicate visitid rows.  If the units_sold is not NULL, then the rows are retained in order to preserve
+-- a transaction record and possibly revenue values that are not NULL.
+-- The values from visitid_values are put into new_analytics so now the table can be removed.
+-- Now new_analytics has a record of every visitid, but there are still duplicates if 
+
 The starting_with_questions were answered after cleaning_data and some QA.
 -- Some of the v2productname and v2productcategory errors and inconsistencies were cleaned during the starting_with_questions.
 -- (You Tube -> YouTube, Earbud -> Earbuds, etc.)

@@ -47,8 +47,9 @@ country_city_rev_sum AS (
 -- LIMIT 1;
 
 Answer:
-The country with the highest transaction revenue is the United States with 205475.11.
-The city with the highest transaction revenue is Sunnyvale, United States, with 155620.72.
+The country with the highest transaction revenue is the United States with 16548.29.
+The city with the highest transaction revenue is San Francisco, United States, with 1708.46,
+(not counting NULL as a city).
 
 
 
@@ -191,8 +192,22 @@ WITH product_name_cat_list AS (
 update_product_name_cat_list AS (
 	SELECT v2productname,
 		CASE
-			WHEN LOWER(v2productname) LIKE '%waze%'
-				THEN 'Waze'
+		
+--	This orders the products by sponsored names
+-- 		WHEN LOWER(v2productname) LIKE '%waze%'
+-- 			THEN 'Waze'
+-- 		WHEN LOWER(v2productname) LIKE '%google%'
+-- 			THEN 'Google'
+-- 		WHEN LOWER(v2productname) LIKE '%nest%'
+-- 			THEN 'Nest'
+-- 		WHEN LOWER(v2productname) LIKE '%youtube%'
+-- 		OR LOWER(v2productname) LIKE '%you tube%'
+-- 			THEN 'YouTube'
+-- 		WHEN LOWER(v2productname) LIKE '%android%'
+-- 			THEN 'Android'
+-- 		WHEN LOWER(v2productname) LIKE '%galaxy%'
+-- 			THEN 'Galaxy'
+
 			WHEN LOWER(v2productname) LIKE '%bag%'
 			OR LOWER(v2productname) LIKE '%backpack%'
 			OR LOWER(v2productname) LIKE '%pouch%'
@@ -249,8 +264,6 @@ update_product_name_cat_list AS (
 			OR LOWER(v2productname) LIKE '%sanitizer%'
 			OR LOWER(v2productname) LIKE '%pet%'
 				THEN 'Lifestyle'
-			WHEN LOWER(v2productname) LIKE '%nest%'
-				THEN 'Nest'
 			WHEN LOWER(v2productname) LIKE '%gift card%'
 				THEN 'Gift Cards'
 			ELSE product_category
@@ -493,44 +506,47 @@ WITH visit_country_city_revenue AS (
 		USING(visitid)
 	WHERE alls.country IS NOT NULL
 	),
+
 -- CTE to list the country and city, and to give the sum of revenue per country and city.
 country_city_rev_sum AS (
-	SELECT DISTINCT country, city,
+	SELECT country, city,
 		SUM(visitid_revenue) OVER (PARTITION BY country) AS country_revenue,
 		SUM(visitid_revenue) OVER (PARTITION BY country, city) AS city_revenue,
 		SUM(visitid_revenue) OVER () AS total_overall_revenue
 	FROM visit_country_city_revenue AS vccr
-	WHERE city is not null
+	-- option to filter out null coutries or cities
+	WHERE country IS NOT NULL
+-- 	AND city IS NOT NULL
 	ORDER BY country, city
 	)
--- -- This query orders the country with the highest level of transaction revenue on the site.
--- SELECT *
--- FROM country_city_rev_sum
--- WHERE country_revenue IS NOT NULL
--- ORDER BY country_revenue DESC;
 
 -- -- Find the percentage of revenue generated per country
 -- SELECT DISTINCT country, country_revenue, (country_revenue/total_overall_revenue)*100 as percent_total_revenue
 -- FROM country_city_rev_sum
--- WHERE country_revenue IS NOT NULL;
+-- WHERE country_revenue IS NOT NULL
+-- ORDER BY country_revenue DESC;
 
 -- This query finds the city with its country with the highest level of transaction revenue on the site,
 -- and compares it as a percentage to the overall revenue generated.
 SELECT DISTINCT country, city, city_revenue AS revenue, (city_revenue/total_overall_revenue)*100 as percent_total_revenue
 FROM country_city_rev_sum
 WHERE city_revenue IS NOT NULL
-ORDER BY city_revenue DESC
+ORDER BY city_revenue DESC;
 
 Answer:
 
-Frim the records for each country which are not null, it appears United States has 205475.11 of total revenue generated.
-This accounts for 99.32% of all the revenue generated per country.  The next is Israel with 0.307%, Australia with 0.173%,
-Switzerland with 0.156%, then Canada with 0.0397%.
-The city with the most revenue generated is Sunnyvale with 155620.72 which is 75.225% of the total revenue generated.  
-The next city being San Francisco, with 14509.47 generated, and it being 7.0137% of the revenue generated, followed by
-New York with 11861.57 and 5.734% revenue generated.  The three lowest were Columbus with 0.011%, Houston with 0.019%, and 
-Toronto with 0.040%
-There was a total of 19 cities which were recorded to generate revenue.
+Countries given a NULL designation has a total revenue of 1090141.24, which represents 98.41% of the total revenue.
+
+From the records which takes into account countries which are not null, it appears United States has 16548.29 of total revenue generated.
+This accounts for 93.81% of all the revenue generated per country.  The next is Israel with 3.60%, Australia with 2.02%,
+Canada with 0.47%, then Switzerland with 0.10%.
+
+The city with the most revenue generated, (not including NULL), is San Francisco, United States, with 1708.46 which is 9.68% of the total revenue,
+(in this case the total revenue from all the non-NULL countries, which includes NULL cities).  
+The next city being New York, with 1648.11 generated, and it being 9.34% of the revenue generated, followed by
+Sunnyvale with 1593.92 and 9.04% revenue generated.  
+The three lowest were Zurich, Switzerland, with 0.096%, Columbus, United States, with 0.125%, and Houston, United States, with 0.221%.
+There was a total of 19 cities recorded which generated revenue.
 
 
 

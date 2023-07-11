@@ -84,6 +84,12 @@ What issues will you address by cleaning the data?
 -- Singapore was set to Singapore.
 -- Yokohama was set to Japan.
 
+-- Duplicate rows are removed from analytics.
+-- Find the distinct visits where the units sold is NULL.  With this the unit price can be changed to NULL in order
+-- to remove duplicate visitid rows.  If the units_sold is not NULL, then the rows are retained in order to preserve
+-- a transaction record and possibly revenue values that are not NULL.
+
+
 
 
 Queries:
@@ -368,3 +374,79 @@ WHERE city LIKE 'city_name';
 UPDATE all_sessions
 SET country = 'country_name'
 WHERE city LIKE 'city_name';
+
+-- Duplicate rows are removed from analytics.
+-- Find the distinct visits where the units sold is NULL.  With this the unit price can be changed to NULL in order
+-- to remove duplicate visitid rows.  If the units_sold is not NULL, then the rows are retained in order to preserve
+-- a transaction record and possibly revenue values that are not NULL.
+-- Query to make a new table new_analytics, which removes duplicate rows in the analytics table.
+WITH new_analytics1 AS (
+	SELECT DISTINCT 
+	visitnumber, visitid, visitstarttime, date, fullvisitorid, channelgrouping, socialengagementtype,
+	units_sold, pageviews, timeonsite, bounces, revenue, 
+		CASE
+			WHEN units_sold IS NULL
+				THEN NULL::int
+			ELSE unit_price
+		END AS unit_price
+	FROM analytics
+	ORDER BY visitid
+	),
+new_analytics2 AS (
+	SELECT
+		ROW_NUMBER() OVER (ORDER BY visitid ASC) AS visit_session, *
+	FROM new_analytics1
+	)
+INSERT INTO new_analytics
+SELECT *
+FROM new_analytics2;
+-- The values from visitid_values are put into new_analytics so now the table can be removed.
+WITH new_dates AS (
+	SELECT *
+	FROM new_analytics na
+	FULL OUTER JOIN visitid_values vv
+		USING(visitid)
+	WHERE na.date IS NULL
+	)
+UPDATE new_analytics AS na
+SET date = nd.visitid_date
+FROM new_dates AS nd
+WHERE na.visitid = nd.visitid
+AND na.fullvisitorid = nd.fullvisitorid;
+
+
+
+
+
+
+
+WITH new_analytics1 AS (
+	SELECT DISTINCT 
+	visitnumber, visitid, visitstarttime, date, 
+	CASE
+		WHEN an.fullvisitorid IS NULL
+			THEN alls.fullvisitorid
+		ELSE an.fullvisitorid
+	END AS fullvisitorid,
+	an.channelgrouping, socialengagementtype,
+	units_sold, an.pageviews, an.timeonsite, an.bounces, an.revenue, 
+		CASE
+			WHEN an.units_sold IS NULL
+				THEN NULL::int
+			ELSE an.unit_price
+		END AS unit_price
+	FROM analytics AS an
+	FULL OUTER JOIN all_sessions AS alls
+		USING(visitid)
+-- 	WHERE alls.visitid IS NULL
+	ORDER BY visitid
+	),
+	
+new_analytics2 AS (
+	SELECT
+		ROW_NUMBER() OVER (ORDER BY visitid ASC) AS visit_session, *
+	FROM new_analytics1
+	)
+	
+SELECT *
+FROM new_analytics2;
