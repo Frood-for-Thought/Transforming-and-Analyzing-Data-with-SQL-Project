@@ -414,39 +414,3 @@ FROM new_dates AS nd
 WHERE na.visitid = nd.visitid
 AND na.fullvisitorid = nd.fullvisitorid;
 
-
-
-
-
-
-
-WITH new_analytics1 AS (
-	SELECT DISTINCT 
-	visitnumber, visitid, visitstarttime, date, 
-	CASE
-		WHEN an.fullvisitorid IS NULL
-			THEN alls.fullvisitorid
-		ELSE an.fullvisitorid
-	END AS fullvisitorid,
-	an.channelgrouping, socialengagementtype,
-	units_sold, an.pageviews, an.timeonsite, an.bounces, an.revenue, 
-		CASE
-			WHEN an.units_sold IS NULL
-				THEN NULL::int
-			ELSE an.unit_price
-		END AS unit_price
-	FROM analytics AS an
-	FULL OUTER JOIN all_sessions AS alls
-		USING(visitid)
--- 	WHERE alls.visitid IS NULL
-	ORDER BY visitid
-	),
-	
-new_analytics2 AS (
-	SELECT
-		ROW_NUMBER() OVER (ORDER BY visitid ASC) AS visit_session, *
-	FROM new_analytics1
-	)
-	
-SELECT *
-FROM new_analytics2;
