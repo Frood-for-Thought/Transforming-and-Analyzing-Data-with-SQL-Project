@@ -13,7 +13,7 @@ def read_csv_or_excel(file_name, suffix):
              displays the first 5 rows to see the type of data: dataframe.head()
     """
     if suffix.lower() == 'c':
-        dataframe = pd.read_csv(f"{file_name}.csv")
+        dataframe = pd.read_csv(f"{file_name}.csv", nrows=20)
         pd.set_option('display.max_columns', None)  # Show all the columns
         return dataframe.dtypes, dataframe.head()
     elif suffix.lower() == 'x':

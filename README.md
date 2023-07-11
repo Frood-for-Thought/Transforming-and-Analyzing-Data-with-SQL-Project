@@ -31,7 +31,7 @@ Note: make sure the program is in the same location as the table files to read f
 
 -- Change the visitstarttime column in analytics from unix epoch to a timestamp.
 -- Check if the visitstarttime timestamp and date columns have mismatching dates.
--- The date in all_sessions also has the same error as analytics.
+-- The date in all_sessions also has the same error as in analytics.
 -- After fixing the dates in the analytics table,
 -- An interim table is created to store all the visitid values and their dates.
 -- The CTE takes the visitid's and dates from both the all_sessions and analytics tables.
@@ -118,7 +118,8 @@ Note: make sure the program is in the same location as the table files to read f
 -- Singapore was set to Singapore.
 -- Yokohama was set to Japan.
 
--- Duplicate rows are removed from analytics.
+-- Duplicate rows are removed from analytics when transferring to new_analytics.
+-- Instead of millions of rows there are now over 200000.
 -- Find the distinct visits where the units sold is NULL.  With this the unit price can be changed to NULL in order
 -- to remove duplicate visitid rows.  If the units_sold is not NULL, then the rows are retained in order to preserve
 -- a transaction record and possibly revenue values that are not NULL.
@@ -132,24 +133,63 @@ The starting_with_questions were answered after cleaning_data and some QA.
 -- Combined the information from tables products, sales_by_sku, and sales_report
 -- into the table product_information to get rid of redundant information.
 
--- Product_information still has a lot of duplicate rows for product_sku to be a primary key,
+-- product_information still has a lot of duplicate rows for product_sku to be a primary key,
 -- it still requires a lot of work to filter through all the productnames and productcategory values.
 -- Also filtering down the productnames may could cause a loss in information, such as brand names.
 -- More time is needed to go through the product_information table before product_sku can be a primary key.
 -- However, the tables products, sales_report, and sales_by_sku can now be removed because all the infomation is preserved in product_information.
+-- The order details are removed from product_information are now in the table product_order with product_sku being the primary key.
 
 -- There are still duplicate values of visitid in the new_analytics table in order to preserve missing transaction revenue,
--- so that table cannot become a primary key. Instead a new row, visit_session was made to be the primary key.
+-- so that table column cannot become a primary key. Instead a new row, visit_session was made to be the primary key.
 
 -- The main takeaway from Question 2 of starting_with_data, is that there are a lot of countries and cities unaccounted for
 -- across the globe, and more data gathering needs to be done to match the fullvisitorid with the country and city.
 
--- There are three main tables now, all_sessions, new_analytics, product_information.
+-- There are four main tables now, all_sessions, new_analytics, product_information, and product_order.
+-- In order to preserve data I still had duplicare product_sku's, fullvisitorid's and visitid's and was not able to get to 3NF.
+
 ## Results
-(fill in what you discovered this data could tell you and how you used the data to answer those questions)
+
+Tested and converted to fullvisitorid to bigint without losing unique IDs for analytics and all_sessions tables.
+Revenues were divided by 1000000.
+Change the visitstarttime column in analytics from unix epoch to a timestamp.
+The transactionrevenue column is redundant in all_sessions and all the information is stored in totaltransactionrevenue.
+Discreet units were converted to integer while continuous were real.
+VARCHAR were shortened to meet the needs of table column with characters and values far above that were reformatted or removed.
+Remove leading spaces in product names using trim.
+A lot of the product names and categories were cleaned up.
+Verified there are no locations with cities without countries in all_sessions table.
+Found some cities which have more than one distinct country, and corrected this in cases where this wasn't true.
+Sentimentscore was converted to a scale betwen 0 and 100.
+Duplicate rows are removed from analytics when transferring to new_analytics.
+Instead of millions of rows there are now over 200000.
+
+There are multiple trasaction revenues per visitid.  Unique visitid's can have multiple values for units_sold, unit_price, and revenue.
+More work needs to go into gathering data to determine if there are multiple orders per visit or if a lot of the information is redundant.
+From the data gathered, fullvisitorid's are making multiple purchases of the same product during the same visitid or during multiple visits,
+based on different order quantities, unit_prices, revenue generated, and multiple visitid's for the same product.
+
+A query was made to approximate the revenue gained when the value in the revenue column in the analytics table is NULL.
+Compared to questions 1 and 5 in starting_with_questions, now 99.10% of the revenue is going to countries which are
+not listed and given a NULL category.
+
+There was no correlation with start time and pageviews, (p-value > 0.05 using regression analysis).
 
 ## Challenges 
-(discuss challenges you faced in the project)
+More work needs to go into gathering data to determine if there are multiple orders per visit or if a lot of the information is redundant.
+
+There are four main tables now, all_sessions, new_analytics, product_information, and product_order.
+In order to preserve data I still had duplicare product_sku's, fullvisitorid's and visitid's and was not able to get to 3NF.
 
 ## Future Goals
-(what would you do if you had more time?)
+
+Instead of general productnames, more work needs to go into matching one productname with one sku in order to make a primary key in product_information.
+
+Since approximately 99% of the revenue is going to countries which are not listed more work needs to be done to fill in those values.
+The purchase revenue data is a small snapshot of what the total global purchases done are, and as a result can have a false positive with what
+item is popular.  
+
+More work needs to go into clarifying how much revenue is generated per visitid and to which country and city that revenue is coming from.
+After data is gathered on revenue, country and city, only then can all_sessions have fullvisitorid as its primary key, 
+and new_analytics have visitid as its primary key.

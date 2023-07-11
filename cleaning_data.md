@@ -88,7 +88,7 @@ What issues will you address by cleaning the data?
 -- Find the distinct visits where the units sold is NULL.  With this the unit price can be changed to NULL in order
 -- to remove duplicate visitid rows.  If the units_sold is not NULL, then the rows are retained in order to preserve
 -- a transaction record and possibly revenue values that are not NULL.
-
+-- Spaces are removed in product_sku.
 
 
 
@@ -374,6 +374,8 @@ WHERE city LIKE 'city_name';
 UPDATE all_sessions
 SET country = 'country_name'
 WHERE city LIKE 'city_name';
+
+-- searchkeyword has no information and was removed.
 
 -- Duplicate rows are removed from analytics.
 -- Find the distinct visits where the units sold is NULL.  With this the unit price can be changed to NULL in order
