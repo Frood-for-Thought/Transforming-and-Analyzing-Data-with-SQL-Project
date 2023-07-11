@@ -45,7 +45,7 @@ visitid_missing_revenue AS (
 -- Now the missing revenue values have an approximate revenue value added if they are NULL.
 -- The CTE visitid_missing_revenue is joined to fill in the missing revenue values in analytics 
 -- using the revenue values calculated in the CTE.
-SELECT an.visitid, an.units_sold, an.unit_price, an.revenue,
+SELECT DISTINCT an.visitid, an.units_sold, an.unit_price, an.revenue,
 	CASE
 		WHEN an.units_sold IS NULL
 			THEN NULL
@@ -64,7 +64,7 @@ ORDER BY visitid;
 
 Answer:  
 
-Now 39977 distinct rows have filled in missing revenue values in the analytics table.
+Now 39948 distinct rows have filled in missing revenue values in the analytics table.
 These values should only be used for an approximation of the data and not replace missing NULL values
 in the revenue column in the analytics table.
 
@@ -158,7 +158,7 @@ visit_country_city_revenue AS (
 				THEN aarv.missing_revenue
 			WHEN aarv.missing_revenue IS NULL
 				THEN fvc.totaltransactionrevenue
-			ELSE aarv.revenue
+			ELSE fvc.totaltransactionrevenue
 		END AS visitid_revenue,
 		fvc.country,fvc.city
 	FROM fullvisitorid_country AS fvc
@@ -198,34 +198,68 @@ ORDER BY city_revenue DESC;
 
 Answer:
 
-Compared to questions 1 and 5 in starting_with_questions, now 99.44% of the revenue is going to countries which are
+Compared to questions 1 and 5 in starting_with_questions, now 99.10% of the revenue is going to countries which are
 not listed and given a NULL category.
 In question 1 and 5 there were a total of 5 countries recorded which did not contain NULL values, now with
 approximating the revenue per transaction in the analytics table, it has increased to 14 countries.
 These countries have even less percent of the revenue generated than compared to questions 1 and 5 because now 
 there is more revenue going to countries without a category and labelled NULL.
 The country with the highest transaction revenue is still the United States but instead of 205475.11 found in 
-question 1 in starting_with_questions, the revenue is now 11362.12.  While the approximate tax is not exact in question 1
+question 1 in starting_with_questions, the revenue is now 20199.42.  While the approximate tax is not exact in question 1
 for starting_with_data, it may give a more accurate summery over how the revenue is distributed between countries.
 
 Compared to question 1 and 5, there is now 32 cities recorded instead of 19.  Of the categories with cities and countries which
-are not including missing values, the city with the most revenue generated is Mountain View, with 14.07% of the revenue.  Following
-that is Sunnyvale with 13.94% of the revenue.  Unlike question 5 in starting_with_questions, San Francisco is now 4th instead of 
-1st with 5.87% of the revenue generated.
+are not including missing values, the city with the most revenue generated is Sunnyvale, with 29.14% of the revenue.  Following
+that is Mountain View with 10.06% of the revenue.  Unlike question 5 in starting_with_questions, San Francisco is now 4th instead of 
+1st with 5.80% of the revenue generated.
 
 It is important to note that even with an approximation to broaden the amount of countries and cities collected, there is still
-a lot of missing data.  More records should be gathered to find 99.44% of the revenue going to other countries in order for there
+a lot of missing data.  More records should be gathered to find 99.10% of the revenue going to other countries in order for there
 to be a more accurate accounting going on in other cities.
 
-Question 3: 
+
+
+Question 3: What are the total number of distinct visitorid's and fullvisitorid's in the tables all_sessions and analytics?
 
 SQL Queries:
 
-
+-- Find the number of unique visitid and fullvisitorid in both the all_sesions and analytics tables,
+-- as well as the total number of unique values between the two tables.
+-- Row 1 is all_sessions, row 2 is analytics.
+SELECT COUNT(DISTINCT alls.fullvisitorid) AS distinct_fullvisitorid,
+	COUNT(DISTINCT alls.visitid) AS distinct_visitid
+FROM all_sessions AS alls
+UNION
+SELECT COUNT(DISTINCT an.fullvisitorid), 
+	COUNT(DISTINCT an.visitid)
+FROM analytics AS an;
+-- all_sessions table has fewer distinct fullvisitorid values than the analytics table.
+-- Count the total distinct number of fullvisitorid between the two tables.
+SELECT COUNT(DISTINCT fullvisitorid) AS total_distinct_fullvisitorid
+FROM analytics AS an
+FULL OUTER JOIN all_sessions AS alls
+USING(fullvisitorid);
+-- Count the total distinct number of visitid between the two tables.
+SELECT COUNT(DISTINCT visitid) AS total_distinct_visitid
+FROM analytics AS an
+FULL OUTER JOIN all_sessions AS alls
+USING(visitid);
 
 Answer:
+There are 14223 distinct fullvisitorid's in the all_sessions table and 120018 distinct in the analytics table.
+Between the two tables there are 130345 distinct fullvisitorid's which is less than 134241 added between the two tables.
+Therefore each table contains unique fullvisitorid's so care should be made when creating a primary key.
 
+There are 14556 distinct visitid's in the all_sessions table and 148642 distinct in the analytics table.
+Between the two tables there are 159538 distinct visitid's which is less than 163198 added between the two tables.
+Like fullvisitorid's, each table contains unique visitid's so care should be made when creating a primary key using visitid.
 
+It makes sense that there would be more visitid's than fullvisitorid's because people would visit multiple sites.
+Now new_analytics contains all distinct visitid and fullvisitorid values.
+
+SELECT count(distinct visitid), count(distinct fullvisitorid)
+FROM new_analytics;
+-- Shows 159538 and 130345
 
 Question 4: 
 

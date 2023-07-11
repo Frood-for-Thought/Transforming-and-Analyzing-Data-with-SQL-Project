@@ -414,3 +414,4 @@ FROM new_dates AS nd
 WHERE na.visitid = nd.visitid
 AND na.fullvisitorid = nd.fullvisitorid;
 
+-- Spaces are removed in product_sku.

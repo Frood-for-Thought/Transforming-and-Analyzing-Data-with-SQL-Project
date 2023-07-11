@@ -63,7 +63,7 @@ Note: make sure the program is in the same location as the table files to read f
 -- no values of productrevenue is less than 0.
 -- all revenue contains valid decimal or integer values.
 
--- A query shows there are unique values in sales_by_skew which are not in the tables products or sales_report.
+-- A query shows there are unique values in sales_by_sku which are not in the tables products or sales_report.
 -- The table should not be deleted because of this but it should be deleted after preserving those values.
 -- This one-to-one table seems redundant and everything could be placed into the sales_report table.
 -- Products should get a unique products key and not the sku column, while sales_report should get a sales key.
@@ -129,7 +129,22 @@ The starting_with_questions were answered after cleaning_data and some QA.
 -- Some of the v2productname and v2productcategory errors and inconsistencies were cleaned during the starting_with_questions.
 -- (You Tube -> YouTube, Earbud -> Earbuds, etc.)
 
+-- Combined the information from tables products, sales_by_sku, and sales_report
+-- into the table product_information to get rid of redundant information.
 
+-- Product_information still has a lot of duplicate rows for product_sku to be a primary key,
+-- it still requires a lot of work to filter through all the productnames and productcategory values.
+-- Also filtering down the productnames may could cause a loss in information, such as brand names.
+-- More time is needed to go through the product_information table before product_sku can be a primary key.
+-- However, the tables products, sales_report, and sales_by_sku can now be removed because all the infomation is preserved in product_information.
+
+-- There are still duplicate values of visitid in the new_analytics table in order to preserve missing transaction revenue,
+-- so that table cannot become a primary key. Instead a new row, visit_session was made to be the primary key.
+
+-- The main takeaway from Question 2 of starting_with_data, is that there are a lot of countries and cities unaccounted for
+-- across the globe, and more data gathering needs to be done to match the fullvisitorid with the country and city.
+
+-- There are three main tables now, all_sessions, new_analytics, product_information.
 ## Results
 (fill in what you discovered this data could tell you and how you used the data to answer those questions)
 

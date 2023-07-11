@@ -15,13 +15,12 @@ WITH visit_country_city_revenue AS (
 		CASE
 			WHEN an.revenue IS NULL
 				THEN alls.totaltransactionrevenue
-			ELSE an.revenue
+			ELSE alls.totaltransactionrevenue
 		END AS visitid_revenue,
 		alls.country, alls.city
 	FROM all_sessions AS alls
 	FULL OUTER JOIN analytics AS an
 		USING(visitid)
-	WHERE alls.country IS NOT NULL
 	),
 -- CTE to list the country and city, and to give the sum of revenue per country and city.
 country_city_rev_sum AS (
@@ -47,8 +46,9 @@ country_city_rev_sum AS (
 -- LIMIT 1;
 
 Answer:
-The country with the highest transaction revenue is the United States with 16548.29.
-The city with the highest transaction revenue is San Francisco, United States, with 1708.46,
+
+The country with the highest transaction revenue is the United States with 250813.56.
+The city with the highest transaction revenue is San Francisco, United States, with 1564.32,
 (not counting NULL as a city).
 
 
@@ -339,7 +339,36 @@ followed by Google with 16.
 
 SQL Queries:
 
--- Like in question 3, the v2 product names are grouped together but this time on 
+-- All_sessions contains more product name details per productsku than products.
+SELECT COUNT(DISTINCT productsku), COUNT(DISTINCT v2productname)
+FROM all_sessions;
+SELECT COUNT(DISTINCT sku), COUNT(DISTINCT name)
+FROM products;
+
+-- Merge all the product names from products and all_sessions
+WITH product_sku_names_cat_list AS (
+	SELECT 
+		CASE
+			WHEN alls.productsku IS NULL
+				THEN pro.sku
+			WHEN pro.sku IS NULL AND alls.productsku IS NULL
+				THEN NULL
+			ELSE alls.productsku
+		END AS productsku,
+		CASE
+			WHEN alls.productsku IS NOT NULL
+				THEN alls.v2productname
+			WHEN pro.sku IS NOT NULL
+				THEN pro.name
+			ELSE alls.v2productname
+		END AS v2productname, 
+		alls.v2productcategory
+	FROM all_sessions AS alls
+	FULL OUTER JOIN products AS pro
+		ON alls.productsku = pro.sku
+	),
+
+-- filter out productnames, either by brand or type of product.
 WITH product_name_list AS (
 	SELECT v2productname,
 	CASE
@@ -477,11 +506,17 @@ GROUP BY products;
 Answer:
 
 The most popular product sold overall are 'Yoga Supplies' being ordered 589784 in the United States.  The next popular supplies after that
-were umbrellas, being sold 588886 times.  However, sweater products were the most popular in 82 countries while yoga supplies were 
-the second most popular, being 16 countries.  When not ordering the products sold by grouping the names, the most popular item was 
+were umbrellas, being sold 588886 times.  
+
+However, sweater products were the most popular in 73 countries while yoga supplies were the second most popular, being 16 countries.
+  
+When not ordering the products sold by editing and grouping the original names, the most popular item was 
 YouTube Wool Heather Cap Heather/Black being the most popular in 30 countries.  This is followed with YouTube Youth Short Sleeve Tee Red,
 and YouTube Twill Cap being the most popular in 17 countries.  When not grouping the names of the orders sold, the most popular item
 sold per country was YouTube Youth Short Sleeve Tee Red with it being 653414 times sold in the United States.
+
+Sweaters were the most popular in the most cities with 68 cities, while Yoga Supplies came second, being the most popular in 13 cities.
+Like with countries, Yoga Supplies were the most ordered with 73902 in Mountain View.
 
 
 
@@ -498,7 +533,7 @@ WITH visit_country_city_revenue AS (
 		CASE
 			WHEN an.revenue IS NULL
 				THEN alls.totaltransactionrevenue
-			ELSE an.revenue
+			ELSE alls.totaltransactionrevenue
 		END AS visitid_revenue,
 		alls.country, alls.city
 	FROM all_sessions AS alls
@@ -535,16 +570,13 @@ ORDER BY city_revenue DESC;
 
 Answer:
 
-Countries given a NULL designation has a total revenue of 1090141.24, which represents 98.41% of the total revenue.
+From the records which takes into account countries which are not null, it appears United States has 13098.16 of total revenue generated.
+This accounts for 92.52% of all the revenue generated per country.  The next is Israel with 4.25%, then Australia with 2.53%.
 
-From the records which takes into account countries which are not null, it appears United States has 16548.29 of total revenue generated.
-This accounts for 93.81% of all the revenue generated per country.  The next is Israel with 3.60%, Australia with 2.02%,
-Canada with 0.47%, then Switzerland with 0.10%.
-
-The city with the most revenue generated, (not including NULL), is San Francisco, United States, with 1708.46 which is 9.68% of the total revenue,
-(in this case the total revenue from all the non-NULL countries, which includes NULL cities).  
-The next city being New York, with 1648.11 generated, and it being 9.34% of the revenue generated, followed by
-Sunnyvale with 1593.92 and 9.04% revenue generated.  
+The city with the most revenue generated is San Francisco, United States, with 1564.32 which is 11.05% of the total revenue, 
+(in this case the total revenue from all the non-NULL countries, which includes unrecorded cities with NULL).  
+The next city being Sunnyvale, with 992.23 generated, and it being 7.01% of the revenue generated, followed by
+Atlanta with 854.44 and 6.04% revenue generated.  
 The three lowest were Zurich, Switzerland, with 0.096%, Columbus, United States, with 0.125%, and Houston, United States, with 0.221%.
 There was a total of 19 cities recorded which generated revenue.
 

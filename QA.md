@@ -1,5 +1,17 @@
 What are your risk areas? Identify and describe them.
 
+-- Product_information still has a lot of duplicate rows for product_sku to be a primary key,
+-- it still requires a lot of work to filter through all the productnames and productcategory values.
+-- Also filtering down the productnames may could cause a loss in information, such as brand names.
+-- More time is needed to go through the product_information table before product_sku can be a primary key.
+-- However, the tables products, sales_report, and sales_by_sku can now be removed because all the infomation is preserved in product_information.
+
+-- The main takeaway from Question 2 of starting_with_data, is that there are a lot of countries and cities unaccounted for
+-- across the globe, and more data gathering needs to be done to match the fullvisitorid with the country and city.
+
+-- There are still duplicate values of visitid in the new_analytics table in order to preserve missing transaction revenue,
+-- so that table cannot become a primary key. Instead a new row, visit_session was made to be the primary key.
+
 
 
 QA Process:
@@ -64,7 +76,7 @@ ALTER COLUMN visitstarttime TYPE timestamp
 USING TO_TIMESTAMP(visitstarttime);
 
 --
--- The following query shows there are unique values in sales_by_skew which are not in the tables products or sales_report.
+-- The following query shows there are unique values in sales_by_sku which are not in the tables products or sales_report.
 -- The table should not be deleted because of this but it should be deleted after preserving those values.
 -- This one-to-one table seems redundant and everything could be placed into the sales_report table.
 -- Products should get a unique products key and not the sku column, while sales_report should get a sales key.
@@ -119,3 +131,65 @@ FROM count_table;
 SELECT visitid, country, city, totaltransactionrevenue
 FROM all_sessions
 WHERE country IS NULL AND city IS NOT NULL;
+
+
+-- All_sessions contains more product name details per productsku than products.
+SELECT COUNT(DISTINCT productsku), COUNT(DISTINCT v2productname)
+FROM all_sessions;
+SELECT COUNT(DISTINCT sku), COUNT(DISTINCT name)
+FROM products;
+
+-- Combine the information from tables products, sales_by_sku, and sales_report.
+-- The CTE combines information from the products table and the product names from all_sessions.
+WITH product_sku_names_cat_list AS (
+	SELECT
+		CASE
+			WHEN alls.productsku IS NULL
+				THEN pro.sku
+			ELSE alls.productsku
+		END AS product_sku,
+		CASE
+			WHEN alls.productsku IS NOT NULL
+				THEN alls.v2productname
+			WHEN pro.sku IS NOT NULL
+				THEN pro.name
+			ELSE alls.v2productname
+		END AS productname,
+	pro.*
+	FROM all_sessions AS alls
+	FULL OUTER JOIN products AS pro
+		ON alls.productsku = pro.sku
+	),
+-- Combine all the tables to make one product table with all the information including the
+-- distinct skus in sales_by_product.
+product_information2 AS (
+	SELECT DISTINCT
+		CASE
+			WHEN sr.productsku IS NULL AND psncl.product_sku IS NULL
+				THEN sbs.productsku
+			WHEN psncl.product_sku IS NULL
+				THEN sr.productsku
+			ELSE psncl.product_sku
+		END AS product_sku,
+		psncl.productname, alls.v2productcategory AS productcategory,
+		psncl.orderedquantity, sr.stocklevel,
+		sr.restockingleadtime, sr.sentimentscore, sr.sentimentmagnitude,
+		sr.ratio, sbs.total_ordered
+	FROM product_sku_names_cat_list AS psncl
+	FULL OUTER JOIN sales_report AS sr
+	ON psncl.product_sku = sr.productsku
+	FULL OUTER JOIN sales_by_sku AS sbs
+	ON psncl.product_sku = sbs.productsku
+	JOIN all_sessions AS alls
+	ON psncl.product_sku = alls.productsku
+	)
+-- Put all the information from products, sales_by_sku, and sales_report 
+-- into the table product_information to get rid of redundant information.
+-- INSERT INTO product_information
+-- SELECT *
+-- FROM product_information2;
+
+-- Product_information still has a lot of duplicate rows for product_sku to be a primary key,
+-- it still requires a lot of work to filter through all the productnames and productcategory values.
+-- Also filtering down the productnames may could cause a loss in information, such as brand names.
+-- More time is needed to go through the product_information table before product_sku can be a primary key.
