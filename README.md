@@ -279,7 +279,9 @@ There is still 116144 fullvisitorid's without a country.
 Instead of general productnames, more work needs to go into matching one productname with one sku in order to make a primary key in product_information.
 
 Since an approximate estimate showed 99% of the revenue is going to countries and cities which are not listed more work needs to be done to fill in those values,
-as well as account for the missing revenue.
+as well as account for the missing revenue.  
+Need to determine if all_sessions is undercounting revenue or new_analytics is overcounting.
+
 The purchase revenue data is a small snapshot of what the total global purchases done are, and as a result can have a false positive with what
 items are popular.
 
