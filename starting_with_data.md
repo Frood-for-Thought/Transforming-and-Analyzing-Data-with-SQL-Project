@@ -226,7 +226,7 @@ Question 3: What are the total number of distinct visitorid's and fullvisitorid'
 
 SQL Queries:
 
--- Find the number of unique visitid and fullvisitorid in both the all_sesions and analytics tables,
+-- Find the number of unique visitid and fullvisitorid in both the all_sessions and analytics tables,
 -- as well as the total number of unique values between the two tables.
 -- Row 1 is all_sessions, row 2 is analytics.
 SELECT COUNT(DISTINCT alls.fullvisitorid) AS distinct_fullvisitorid,
@@ -532,5 +532,5 @@ Sweater products were the most popular in 73 countries while yoga supplies were 
 It looks like most purchases for yoga supplies are being made in the United States, while other products are being viewed in other countries.  
 Since a lot of revenue is unaccounted for in other countries, visitor views could be gauge for what items are popular to purchase.
 
-Including the approximation, there were 463 distinct fullvisitorid's which made a purchase on the site.  
+Including the approximation, there were 463 distinct fullvisitorid's in new_analytics and all_sessions which made a purchase on the site.  
 That's 0.35% when compared to 130345 ids in question 3.

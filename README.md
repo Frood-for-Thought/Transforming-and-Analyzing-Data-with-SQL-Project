@@ -262,7 +262,7 @@ while yoga supplies were the second most popular, being 16 countries.
 It looks like most purchases for yoga supplies are being made in the United States, while other products are being viewed in other countries.  
 Since a lot of revenue is unaccounted for in other countries, visitor views could be gauge for what items are popular to purchase.
 
-Including the approximation, there were 463 distinct fullvisitorid's which made a purchase on the site.  
+Including the approximation, there were 463 distinct fullvisitorid's in new_analytics and all_sessions which made a purchase on the site.  
 That's 0.35% when compared to 130345 ids in question 3, which further affirms a lot of missing revenue data.
 
 ## Challenges 
