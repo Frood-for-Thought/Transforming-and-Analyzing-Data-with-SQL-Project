@@ -280,15 +280,15 @@ WITH fullvisitor_pageviews AS (
 -- Use the CTE to match the fullvisitorid with their
 -- countries and cities and with their local time and pageviews.
 country_city_time_views AS (
-SELECT DISTINCT
-	alls.country, alls.city, 
-	na.visitstarttime::time as time, 
-	fp.totalpageviews AS pageviews
-FROM fullvisitor_pageviews AS fp
-JOIN all_sessions AS alls
-USING(fullvisitorid)
-JOIN new_analytics AS na
-USING(visitid)
+	SELECT DISTINCT
+		alls.country, alls.city, 
+		na.visitstarttime::time as time, 
+		fp.totalpageviews AS pageviews
+	FROM fullvisitor_pageviews AS fp
+	JOIN all_sessions AS alls
+		USING(fullvisitorid)
+	JOIN new_analytics AS na
+		USING(visitid)
 	)
 
 -- Group the country up with the total pageviews and average start time of viewing,
@@ -318,7 +318,7 @@ Most pageviews go to cities unaccounted for, with 56214 being NULL.
 
 
 
-Question 5: 
+Question 5: What are the general products viewed by each visitor, and what percentage of fullvisitorid's have a recorded purchase?
 
 
 
@@ -525,7 +525,7 @@ The product type viewed by most visitors are sweaters with 529 times.
 Taken from the previous questions:
 The most popular product sold overall are 'Yoga Supplies' being ordered in the United States.  
 The next popular supplies after that were umbrellas.    
-Despite the generating the most revenue, most pageviews were on the sweater.  
+Despite generating the most revenue, most pageviews were on the sweater.  
 
 Sweater products were the most popular in 73 countries while yoga supplies were the second most popular, being 16 countries.  
 It looks like most purchases for yoga supplies are being made in the United States, while other products are being viewed in other countries.  

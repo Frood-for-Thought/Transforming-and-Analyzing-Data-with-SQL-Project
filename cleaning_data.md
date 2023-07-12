@@ -348,16 +348,7 @@ SET revenue = revenue/1000000;
 -- Set 'New York' to 'United States'.
 -- There is an Amsterdam in the United States.
 
--- Find cities which have more than one distinct country.  In some cases this could be true.
-SELECT city, COUNT(DISTINCT country)
-FROM all_sessions
-GROUP BY city
-HAVING COUNT(DISTINCT country) > 1
-AND city IS NOT NULL;
--- This query is used to list which countries the city appeared in to cross reference if there is one.
-SELECT DISTINCT country, city
-FROM all_sessions
-WHERE city LIKE 'Bangkok';
+
 
 -- Find cities which have more than one distinct country.  In some cases this could be true.
 SELECT city, COUNT(DISTINCT country)
@@ -374,6 +365,20 @@ WHERE city LIKE 'city_name';
 UPDATE all_sessions
 SET country = 'country_name'
 WHERE city LIKE 'city_name';
+
+-- Fix fullvisitorid's and fill in NULL information if there are missing cities or there are two countries per single id.
+WITH visitor_city_country AS (
+	SELECT DISTINCT fullvisitorid, country, city
+	FROM all_sessions
+	)
+SELECT fullvisitorid, COUNT(*)
+FROM visitor_city_country
+GROUP BY fullvisitorid
+HAVING count(*) > 1;
+
+UPDATE all_sessions
+SET city = _
+WHERE fullvisitorid = _;
 
 -- searchkeyword has no information and was removed.
 

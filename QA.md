@@ -13,11 +13,11 @@ What are your risk areas? Identify and describe them.
 
 -- There are still duplicate values of visitid in the new_analytics table in order to preserve missing transaction revenue,
 -- so that table column cannot become a primary key. Instead a new row, visit_session was made to be the primary key.
+-- A new table was created called fullvisitorid_location with fullvisitorid as its primary key.
 
-
-There are four main tables now, all_sessions, new_analytics, product_information, and product_order.
-In order to preserve data I still had duplicare product_sku's, fullvisitorid's and visitid's and was not able to get to 3NF.
-See questions 3 and 4 in starting_with_questions for dealing with productname and category risk areas.
+There are five main tables now, all_sessions, new_analytics, product_information, product_order, and fullvisitorid_location.
+In order to preserve data I still have duplicare product_sku's, fullvisitorid's and visitid's and was not able to get to 3NF.
+See questions 3 and 4 in starting_with_questions for dealing with productname and category risk areas sorting.
 
 
 QA Process:
@@ -220,3 +220,12 @@ to_be_inserted AS (
 INSERT INTO product_order
 SELECT *
 FROM to_be_inserted;
+
+-- A new table was created called fullvisitorid_location with fullvisitorid as its primary key.
+WITH visitor_city_country AS (
+	SELECT DISTINCT fullvisitorid, country, city
+	FROM all_sessions
+	)
+INSERT INTO fullvisitorid_location
+SELECT *
+FROM visitor_city_country;

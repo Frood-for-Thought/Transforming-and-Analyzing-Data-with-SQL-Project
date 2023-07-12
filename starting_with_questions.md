@@ -114,8 +114,8 @@ country_city_order_quantity_with_analytics AS (
 	)
 
 SELECT country, city,
-	SUM(order_quantity) OVER (PARTITION BY country) AS country_order_quantity,
-	SUM(order_quantity) OVER (PARTITION BY city) AS city_order_quantity
+	AVG(order_quantity) OVER (PARTITION BY country) AS country_order_quantity,
+	AVG(order_quantity) OVER (PARTITION BY city) AS city_order_quantity
 FROM country_city_order_quantity_with_analytics
 -- -- The following finds the country with the highest order quantity.
 -- ORDER BY country_order_quantity DESC
@@ -125,8 +125,12 @@ FROM country_city_order_quantity_with_analytics
 -- ORDER BY city_order_quantity DESC;
 
 Answer:
+Including orders from the analytics table incase all_sessions is NULL,
+the country with the highest average order quantity is Vietnam,
+while the city with the highest order quantity is Dallas.
+
 The country with the highest order quantity is the United States with 5840.
-The city with the highest order quantity is Dallas with 1148, (not including NULL).
+The city with the highest order quantity is Dallas with 1148, (not including NULL), followed by Dublin Ireland.
 
 
 
@@ -319,8 +323,6 @@ GROUP BY product_category;
 
 Answer:
 
-
-
 The most times a product category was ordered was in the united states and was a YouTube category with it being the most purchased at 653414 times, 
 followed by the Waze category at 451542 times.  The country with the least times a product category was ordered was Slovakia with Android being 
 ordered 1 time.  The most popular category for all the counties was YouTube, appearing on the top of the list for 114 countries, and
@@ -331,6 +333,7 @@ and the number of times it was purchased being 73671.  Waze was second, with 621
 When dealing with sponsored product categories, Youtube showed up the most with it being the most popular category in 132 cities, 
 followed by Google with 16.
 
+Without taking sponsored brand names, the catagory that was most popular was Office supplies.
 
 
 
