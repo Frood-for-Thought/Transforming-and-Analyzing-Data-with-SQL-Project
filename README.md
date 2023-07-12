@@ -264,7 +264,6 @@ Since a lot of revenue is unaccounted for in other countries, visitor views coul
 
 Including the approximation, there were 463 distinct fullvisitorid's which made a purchase on the site.  
 That's 0.35% when compared to 130345 ids in question 3, which further affirms a lot of missing revenue data.
-There is also 110000 fullvisitorid's with no country or city, so more data needs to be gathered.
 
 ## Challenges 
 More work needs to go into gathering data to determine if there are multiple orders per visit or if a lot of the information is redundant.
@@ -273,6 +272,7 @@ There are five main tables now, all_sessions, new_analytics, product_information
 In order to preserve data I still have duplicate product_sku's, fullvisitorid's and visitid's and was not able to get to 3NF.
 
 More work also needs to be done to label fullvisitorid's with a country and city.
+There is still 116144 fullvisitorid's without a country.
 
 ## Future Goals
 

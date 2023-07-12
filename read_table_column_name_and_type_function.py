@@ -17,7 +17,7 @@ def read_csv_or_excel(file_name, suffix):
         pd.set_option('display.max_columns', None)  # Show all the columns
         return dataframe.dtypes, dataframe.head()
     elif suffix.lower() == 'x':
-        dataframe = pd.read_excel(f"{file_name}.xlsx")
+        dataframe = pd.read_excel(f"{file_name}.xlsx", nrows=20)
         pd.set_option('display.max_columns', None)  # Show all the columns
         return dataframe.dtypes, dataframe.head()
     else:
