@@ -79,9 +79,9 @@ WITH sku_order_quan AS (
 		END AS productsku
 	FROM sales_report as sr
 	FULL OUTER JOIN products as pro
-	ON pro.sku = sr.productsku
+		ON pro.sku = sr.productsku
 	FULL OUTER JOIN sales_by_sku as sbs
-	ON pro.sku = sbs.productsku
+		ON pro.sku = sbs.productsku
 	ORDER BY order_quantity DESC
 	),
 -- Join the previous CTE with all_sessions using the productsku.
@@ -125,7 +125,7 @@ FROM country_city_order_quantity_with_analytics
 -- ORDER BY city_order_quantity DESC;
 
 Answer:
-Including orders from the analytics table incase all_sessions is NULL,
+Including orders from the sales_by_sku and all_sessions, even analytics in case of NULL values,
 the country with the highest average order quantity is Vietnam,
 while the city with the highest order quantity is Dallas.
 
@@ -150,12 +150,8 @@ WITH product_name_cat_list AS (
 	SELECT
 		v2productname,
 		CASE
-			WHEN LOWER(v2productcategory) LIKE '%waze%'
-				THEN 'Waze'
 			WHEN LOWER(v2productcategory) LIKE '%sale%'
 				THEN 'Sale'
-			WHEN LOWER(v2productcategory) LIKE '%nest%'
-				THEN 'Nest'
 			WHEN LOWER(v2productcategory) LIKE '%game%'
 				THEN 'Games'
 			WHEN LOWER(v2productcategory) LIKE '%accessories%'

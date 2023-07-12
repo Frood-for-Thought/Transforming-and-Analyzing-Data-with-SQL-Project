@@ -1,5 +1,10 @@
 What are your risk areas? Identify and describe them.
 
+The main goal was to normalize the data to become more structured and less redundant, 
+and a lot of this was done during QA and data cleaning.  However,
+two tables still have duplicate values, the reason for this are described below or in
+Challenges and Future Goals in README.
+
 -- THE FOLLOWING RISK AREAS ARE LISTED UNDER FUTURE GOALS IN README.
 -- Product_information still has a lot of duplicate rows for product_sku to be a primary key,
 -- it still requires a lot of work to filter through all the productnames and productcategory values.
@@ -18,6 +23,9 @@ What are your risk areas? Identify and describe them.
 There are five main tables now, all_sessions, new_analytics, product_information, product_order, and fullvisitorid_location.
 In order to preserve data I still have duplicare product_sku's, fullvisitorid's and visitid's and was not able to get to 3NF.
 See questions 3 and 4 in starting_with_questions for dealing with productname and category risk areas sorting.
+
+The webpage time, productsku, pagetitle, and pagepathlevel1 also needs to be cleaned before fullvisitorid can become the foreign key of all_sessions
+with the table's own primary key.
 
 
 QA Process:

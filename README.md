@@ -176,14 +176,14 @@ The city with the highest transaction revenue is San Francisco, United States, w
 (not counting NULL as a city).
 
 Question 2: What is the average number of products ordered from visitors in each city and country?
-Including orders from the analytics table incase all_sessions is NULL,
+Including orders from the sales_by_sku and all_sessions, even analytics in case of NULL values,
 the country with the highest average order quantity is Vietnam,
 while the city with the highest order quantity is Dallas.
 
 Question 3: Is there any pattern in the types (product categories) of products ordered from visitors in each city and country?
 The most popular category for all the counties was YouTube, appearing on the top of the list for 114 countries, and
 Google coming in second at 12 countries if going by sponsor brands, the least popular was Android.
-Without taking sponsored brand names, the catagory that was most popular was Office supplies.
+Without taking sponsored brand names, the category that was most popular was Office supplies.
 
 Question 4: What is the top-selling product from each city/country? Can we find any pattern worthy of noting in the products sold?
 The most popular product sold overall are 'Yoga Supplies' in the United States with most ordered in Mountain View.
@@ -207,7 +207,8 @@ There was a total of 19 cities recorded which generated revenue.
 
 starting_with_data summary:
 
-A query was made to approximate the revenue gained when the value in the revenue column in the analytics table is NULL.
+A query was made to approximate the revenue gained when the value in the revenue column in the analytics table is NULL,
+or the totaltransactionrevenue in the all_sessions table was NULL.
 Compared to questions 1 and 5 in starting_with_questions, now 99.10% of the revenue is going to countries which are
 not listed and given a NULL category.  While the approximate tax is not exact in question 1
 for starting_with_data, it may give a more accurate summery over how the revenue is distributed between countries.
@@ -219,10 +220,12 @@ there is more revenue going to countries without a category and labelled NULL.
 The country with the highest transaction revenue is still the United States.
 
 Compared to question 1 and 5, there is now 32 cities recorded instead of 19.  Of the categories with cities and countries which
-are not including missing values, the city with the most revenue generated is Sunnyvale, and following
-that is Mountain View.  Unlike question 5 in starting_with_questions, San Francisco is now 4th instead of 1st.
+are not including missing values, the city with the most revenue generated is Sunnyvale, with 51.75% of the revenue.  
+Unlike question 5 in starting_with_questions, San Francisco is now 2nd instead of 
+1st with 8.97% of the revenue generated.  
+Detroit is last with 0.012% of the revenue accounted for.
 
-It is important to note that even with an approximation to broaden the amount of countries and cities collected, there is still
+It is important to note that even with an approximation to broaden the number of countries and cities collected, there is still
 a lot of missing data.  More records should be gathered to find 99.10% of the revenue going to other countries in order for there
 to be a more accurate accounting going on in other cities.
 
@@ -261,25 +264,27 @@ Since a lot of revenue is unaccounted for in other countries, visitor views coul
 
 Including the approximation, there were 463 distinct fullvisitorid's which made a purchase on the site.  
 That's 0.35% when compared to 130345 ids in question 3, which further affirms a lot of missing revenue data.
-There is also around 120000 fullvisitorid's with no country or city.
+There is also 110000 fullvisitorid's with no country or city, so more data needs to be gathered.
 
 ## Challenges 
 More work needs to go into gathering data to determine if there are multiple orders per visit or if a lot of the information is redundant.
 
 There are five main tables now, all_sessions, new_analytics, product_information, product_order, and fullvisitorid_location.
-In order to preserve data I still have duplicare product_sku's, fullvisitorid's and visitid's and was not able to get to 3NF.
+In order to preserve data I still have duplicate product_sku's, fullvisitorid's and visitid's and was not able to get to 3NF.
+
+More work also needs to be done to label fullvisitorid's with a country and city.
 
 ## Future Goals
 
 Instead of general productnames, more work needs to go into matching one productname with one sku in order to make a primary key in product_information.
 
-Since an approximate estimate showed 99% of the revenue is going to countries which are not listed more work needs to be done to fill in those values.
+Since an approximate estimate showed 99% of the revenue is going to countries and cities which are not listed more work needs to be done to fill in those values,
+as well as account for the missing revenue.
 The purchase revenue data is a small snapshot of what the total global purchases done are, and as a result can have a false positive with what
-item is popular.  
+items are popular.
 
 More work needs to go into clarifying how much revenue is generated per visitid and to which country and city that revenue is coming from.
-After data is gathered on revenue, country and city, only then can all_sessions have fullvisitorid as its primary key, 
-and new_analytics have visitid as its primary key.  
+After data is gathered on revenue, country and city, only then can new_analytics have visitid as its primary key.  
 
 The webpage time, productsku, pagetitle, and pagepathlevel1 also needs to be cleaned before fullvisitorid can become the foreign key of all_sessions
 with the table's own primary key.

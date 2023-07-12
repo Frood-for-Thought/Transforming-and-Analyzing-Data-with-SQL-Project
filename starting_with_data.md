@@ -211,9 +211,10 @@ question 1 in starting_with_questions, the revenue is now 20199.42.  While the a
 for starting_with_data, it may give a more accurate summery over how the revenue is distributed between countries.
 
 Compared to question 1 and 5, there is now 32 cities recorded instead of 19.  Of the categories with cities and countries which
-are not including missing values, the city with the most revenue generated is Sunnyvale, with 29.14% of the revenue.  Following
-that is Mountain View with 10.06% of the revenue.  Unlike question 5 in starting_with_questions, San Francisco is now 4th instead of 
-1st with 5.80% of the revenue generated.
+are not including missing values, the city with the most revenue generated is Sunnyvale, with 51.75% of the revenue.  
+Unlike question 5 in starting_with_questions, San Francisco is now 2nd instead of 
+1st with 8.97%% of the revenue generated.  
+Detroit is last with 0.012% of the revenue accounted for.
 
 It is important to note that even with an approximation to broaden the amount of countries and cities collected, there is still
 a lot of missing data.  More records should be gathered to find 99.10% of the revenue going to other countries in order for there
