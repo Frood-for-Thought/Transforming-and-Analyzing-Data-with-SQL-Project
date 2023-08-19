@@ -86,66 +86,62 @@ Therefore all rows have proper format at the start.
 - seachkeyword as altered to VARCHAR(20) from real.
 - ecommerceaction_option was set to 20 characters in lenght.
 
--- Remove leading spaces in products.name using trim.
--- I am unsure of the scoring in the sentiment score, if the negative values are
--- necessary.  The score was converted to a scale betwen 0 and 100.
--- The column was then converted to an integer value.
--- All the numeric values are in valid numeric format.
--- All the rows are preserved testing each numeric range.
+- Remove leading spaces in products.name using trim.
+- I am unsure of the scoring in the sentiment score, if the negative values are necessary.
+- The score was converted to a scale betwen 0 and 100. The column was then converted to an integer value.
+- All the numeric values are in valid numeric format.
+- All the rows are preserved testing each numeric range.
 
--- Remove leading spaces in sales_report.name using trim.
--- sentimentscore in sales_report was altered the same method used in the products table.
--- Removed (not set) from column country in table all_sessions.
--- Restockingleadtime in the sales_report table was converted to a days interval.
--- Divided revenue by 1000000.
+- Remove leading spaces in sales_report.name using trim.
+- sentimentscore in sales_report was altered the same method used in the products table.
+- Removed (not set) from column country in table all_sessions.
+- Restockingleadtime in the sales_report table was converted to a days interval.
+- Divided revenue by 1000000.
 
--- Verified there are no locations with cities without countries in all_sessions table for QA.
--- During cleaning_data, found some cities which have more than one distinct country.  In some cases this could be true.
--- Corrected city names and their locations, set city to country.
--- Fix fullvisitorid's and fill in NULL information if there are missing cities or there are two countries per single id.
--- London, US may mean London, Ohio.
--- Paris, United States may mean Paris, TX.
--- There is a Toronto and Vancouver in the United States.
--- Set 'New York' to 'United States'.
--- There is an Amsterdam in the United States.
--- Hong Kong was set to China.
--- Los Angeles was set to United States.
--- Mexico City was set to Mexico.
--- Mountain View was set to United States.
--- San Francisco was set to United States.
--- Singapore was set to Singapore.
--- Yokohama was set to Japan.
+- Verified there are no locations with cities without countries in all_sessions table for QA.
+- During cleaning_data, found some cities which have more than one distinct country.  In some cases this could be true.
+- Corrected city names and their locations, set city to country.
+- Fix fullvisitorid's and fill in NULL information if there are missing cities or there are two countries per single id.
+- London, US may mean London, Ohio.
+- Paris, United States may mean Paris, TX.
+- There is a Toronto and Vancouver in the United States.
+- Set 'New York' to 'United States'.
+- There is an Amsterdam in the United States.
+- Hong Kong was set to China.
+- Los Angeles was set to United States.
+- Mexico City was set to Mexico.
+- Mountain View was set to United States.
+- San Francisco was set to United States.
+- Singapore was set to Singapore.
+- Yokohama was set to Japan.
 
--- Duplicate rows are removed from analytics when transferring to new_analytics.
--- Instead of millions of rows there are now over 200000.
--- Find the distinct visits where the units sold is NULL.  With this the unit price can be changed to NULL in order
--- to remove duplicate visitid rows.  If the units_sold is not NULL, then the rows are retained in order to preserve
--- a transaction record and possibly revenue values that are not NULL.
--- The values from visitid_values are put into new_analytics so now the table can be removed.
--- Now new_analytics has a record of every visitid, but there are still duplicates if 
+- Duplicate rows are removed from analytics when transferring to new_analytics.  Instead of millions of rows there are now over 200000.
+- Find the distinct visits where the units sold is NULL.  With this the unit price can be changed to NULL in order to remove duplicate visitid rows.
+If the units_sold is not NULL, then the rows are retained in order to preserve a transaction record and possibly revenue values that are not NULL.
+- The values from visitid_values are put into new_analytics so now the table can be removed.
+- Now new_analytics has a record of every visitid, but there are still duplicates.
 
-The starting_with_questions were answered after cleaning_data and some QA.
--- Some of the v2productname and v2productcategory errors and inconsistencies were cleaned during the starting_with_questions.
--- (You Tube -> YouTube, Earbud -> Earbuds, etc.)
+- The starting_with_questions were answered after cleaning_data and some QA.
+- Some of the v2productname and v2productcategory errors and inconsistencies were cleaned during the starting_with_questions.
+(You Tube -> YouTube, Earbud -> Earbuds, etc.)
 
--- Combined the information from tables products, sales_by_sku, and sales_report
--- into the table product_information to get rid of redundant information.
+- Combined the information from tables products, sales_by_sku, and sales_report into the table product_information to get rid of redundant information.
 
--- product_information still has a lot of duplicate rows for product_sku to be a primary key,
--- it still requires a lot of work to filter through all the productnames and productcategory values.
--- Also filtering down the productnames may could cause a loss in information, such as brand names.
--- More time is needed to go through the product_information table before product_sku can be a primary key.
--- However, the tables products, sales_report, and sales_by_sku can now be removed because all the infomation is preserved in product_information.
--- The order details are removed from product_information are now in the table product_order with product_sku being the primary key.
+- product_information still has a lot of duplicate rows for product_sku to be a primary key,
+it still requires a lot of work to filter through all the productnames and productcategory values.
+Also filtering down the productnames may could cause a loss in information, such as brand names.
+- More time is needed to go through the product_information table before product_sku can be a primary key.
+However, the tables products, sales_report, and sales_by_sku can now be removed because all the infomation is preserved in product_information.
+- The order details are removed from product_information are now in the table product_order with product_sku being the primary key.
 
--- There are still duplicate values of visitid in the new_analytics table in order to preserve missing transaction revenue,
--- so that table column cannot become a primary key. Instead a new row, visit_session was made to be the primary key.
+- There are still duplicate values of visitid in the new_analytics table in order to preserve missing transaction revenue,
+so that table column cannot become a primary key. Instead a new row, visit_session was made to be the primary key.
 
--- The main takeaway from Question 2 of starting_with_data, is that there are a lot of countries and cities unaccounted for
--- across the globe, and more data gathering needs to be done to match the fullvisitorid with the country and city.
+- The main takeaway from Question 2 of starting_with_data, is that there are a lot of countries and cities unaccounted for
+across the globe, and more data gathering needs to be done to match the fullvisitorid with the country and city.
 
--- There are five main tables now, all_sessions, new_analytics, product_information, product_order, and fullvisitorid_location.
--- In order to preserve data I still had duplicare product_sku's, fullvisitorid's and visitid's and was not able to get to 3NF.
+- There are five main tables now, all_sessions, new_analytics, product_information, product_order, and fullvisitorid_location.
+In order to preserve data I still had duplicare product_sku's, fullvisitorid's and visitid's and was not able to get to 3NF.
 
 ## Results
 
