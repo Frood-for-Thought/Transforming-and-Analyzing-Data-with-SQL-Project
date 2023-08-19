@@ -22,22 +22,21 @@ Note: make sure the program is in the same location as the table files to read f
 	so that the column names and data types could be known before being inserted into the table values in SQL.
 
 
--- During QA, in pgAdmin, list the column names, data types, character max length or number precision, 
--- if column is nullable, and if it is updateable.
+- During QA, in pgAdmin, list the column names, data types, character max length or number precision, if column is nullable, and if it is updateable.
 
--- Divide the unit_price by 1000000 in cleaning_data.
--- date column reformatted in analytics and all_sessions tables.  For full detail on what was done real the cleaning_data file.
+- Divide the unit_price by 1000000 in cleaning_data.
+- date column reformatted in analytics and all_sessions tables.  For full detail on what was done real the cleaning_data file.
 
--- Test if conversion to big_int is allowable for fullvisitorid without losing unique IDs for analytics and all_sessions tables.
--- Reformatted fullvisitorid in tables analytics and all_sessions.
+- Test if conversion to big_int is allowable for fullvisitorid without losing unique IDs for analytics and all_sessions tables.
+- Reformatted fullvisitorid in tables analytics and all_sessions.
 
--- Change the visitstarttime column in analytics from unix epoch to a timestamp.
--- Check if the visitstarttime timestamp and date columns have mismatching dates.
--- The date in all_sessions also has the same error as in analytics.
--- After fixing the dates in the analytics table,
--- An interim table is created to store all the visitid values and their dates.
--- The CTE takes the visitid's and dates from both the all_sessions and analytics tables.
--- The values from the CTE are inserted into the interim table so that keys from both the tables are preserved.
+- Change the visitstarttime column in analytics from unix epoch to a timestamp.
+- Check if the visitstarttime timestamp and date columns have mismatching dates.
+- The date in all_sessions also has the same error as in analytics.
+- After fixing the dates in the analytics table,
+- An interim table is created to store all the visitid values and their dates.
+- The CTE takes the visitid's and dates from both the all_sessions and analytics tables.
+- The values from the CTE are inserted into the interim table so that keys from both the tables are preserved.
 
 -- The units_sold value needs to be an integer and the column has negative values.
 -- Need to remove negative values in units sold during data cleansing.
