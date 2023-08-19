@@ -5,20 +5,20 @@ and a lot of this was done during QA and data cleaning.  However,
 two tables still have duplicate values, the reason for this are described below or in
 Challenges and Future Goals in README.
 
--- THE FOLLOWING RISK AREAS ARE LISTED UNDER FUTURE GOALS IN README.
--- Product_information still has a lot of duplicate rows for product_sku to be a primary key,
--- it still requires a lot of work to filter through all the productnames and productcategory values.
--- Also filtering down the productnames may could cause a loss in information, such as brand names.
--- More time is needed to go through the product_information table before product_sku can be a primary key.
--- However, the tables products, sales_report, and sales_by_sku can now be removed because all the infomation is preserved in product_information.
--- The order details are removed from product_information are now in the table product_order with product_sku being the primary key.
+THE FOLLOWING RISK AREAS ARE LISTED UNDER FUTURE GOALS IN README.
+Product_information still has a lot of duplicate rows for product_sku to be a primary key,
+it still requires a lot of work to filter through all the productnames and productcategory values.
+Also filtering down the productnames may could cause a loss in information, such as brand names.
+More time is needed to go through the product_information table before product_sku can be a primary key.
+However, the tables products, sales_report, and sales_by_sku can now be removed because all the infomation is preserved in product_information.
+The order details are removed from product_information are now in the table product_order with product_sku being the primary key.
 
--- The main takeaway from Question 2 of starting_with_data, is that there are a lot of countries and cities unaccounted for
--- across the globe, and more data gathering needs to be done to match the fullvisitorid with the country and city.
+The main takeaway from Question 2 of starting_with_data, is that there are a lot of countries and cities unaccounted for
+across the globe, and more data gathering needs to be done to match the fullvisitorid with the country and city.
 
--- There are still duplicate values of visitid in the new_analytics table in order to preserve missing transaction revenue,
--- so that table column cannot become a primary key. Instead a new row, visit_session was made to be the primary key.
--- A new table was created called fullvisitorid_location with fullvisitorid as its primary key.
+There are still duplicate values of visitid in the new_analytics table in order to preserve missing transaction revenue,
+so that table column cannot become a primary key. Instead a new row, visit_session was made to be the primary key.
+A new table was created called fullvisitorid_location with fullvisitorid as its primary key.
 
 There are five main tables now, all_sessions, new_analytics, product_information, product_order, and fullvisitorid_location.
 In order to preserve data I still have duplicare product_sku's, fullvisitorid's and visitid's and was not able to get to 3NF.
@@ -209,7 +209,8 @@ product_information2 AS (
 -- Also filtering down the productnames may could cause a loss in information, such as brand names.
 -- More time is needed to go through the product_information table before product_sku can be a primary key.
 
--- The order details are removed from product_information are now in the table product_order with product_sku being the primary key.
+The order details are removed from product_information are now in the table product_order with product_sku being the primary key.
+```
 WITH product_info AS (
 	SELECT product_sku, 
 	orderedquantity, 
@@ -228,6 +229,7 @@ to_be_inserted AS (
 INSERT INTO product_order
 SELECT *
 FROM to_be_inserted;
+```
 
 -- A new table was created called fullvisitorid_location with fullvisitorid as its primary key.
 WITH visitor_city_country AS (
