@@ -224,12 +224,9 @@ SELECT *
 FROM product_information2;
 ```
 
--- Product_information still has a lot of duplicate rows for product_sku to be a primary key,
--- it still requires a lot of work to filter through all the productnames and productcategory values.
--- Also filtering down the productnames may could cause a loss in information, such as brand names.
--- More time is needed to go through the product_information table before product_sku can be a primary key.
+- Product_information still has a lot of duplicate rows for product_sku to be a primary key, it still requires a lot of work to filter through all the productnames and productcategory values.  Also filtering down the productnames may could cause a loss in information, such as brand names.  More time is needed to go through the product_information table before product_sku can be a primary key.
 
-The order details are removed from product_information are now in the table product_order with product_sku being the primary key.
+- The order details are removed from product_information are now in the table product_order with product_sku being the primary key:
 ```
 WITH product_info AS (
 	SELECT product_sku, 
@@ -251,7 +248,8 @@ SELECT *
 FROM to_be_inserted;
 ```
 
--- A new table was created called fullvisitorid_location with fullvisitorid as its primary key.
+- A new table was created called fullvisitorid_location with fullvisitorid as its primary key:
+```
 WITH visitor_city_country AS (
 	SELECT DISTINCT fullvisitorid, country, city
 	FROM all_sessions
@@ -259,3 +257,4 @@ WITH visitor_city_country AS (
 INSERT INTO fullvisitorid_location
 SELECT *
 FROM visitor_city_country;
+```
