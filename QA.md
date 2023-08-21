@@ -63,10 +63,12 @@ FROM analytics
 LIMIT 1;
 ```
 
--- date column reformatted in analytics and all_sessions tables:
+- date column reformatted in analytics and all_sessions tables:
+```
 ALTER TABLE table_name
 ALTER COLUMN date TYPE date
 USING TO_DATE(date::text, 'YYYYMMDD');
+```
 
 - Test if conversion to big_int is allowable for fullvisitorid without losing unique IDs for analytics and all_sessions tables:
 ```
