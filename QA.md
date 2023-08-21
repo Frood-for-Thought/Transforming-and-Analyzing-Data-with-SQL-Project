@@ -55,18 +55,21 @@ ORDER BY table_name, ordinal_position;
 
 - First the column data types needed to be matched to the quality of data they held
 
--- The date can be reformatted with the option of text.
+- The date can be reformatted with the option of text.
+```
 SELECT date, CONCAT(LEFT(date::text, 4),'-',SUBSTRING(date::text, 5, 2),'-',RIGHT(date::text, 2)) AS date_text,
 	TO_DATE(date::text, 'YYYYMMDD')
 FROM analytics
 LIMIT 1;
+```
 
 -- date column reformatted in analytics and all_sessions tables:
 ALTER TABLE table_name
 ALTER COLUMN date TYPE date
 USING TO_DATE(date::text, 'YYYYMMDD');
 
--- Test if conversion to big_int is allowable for fullvisitorid without losing unique IDs for analytics and all_sessions tables:
+- Test if conversion to big_int is allowable for fullvisitorid without losing unique IDs for analytics and all_sessions tables:
+```
 WITH column_change AS (
 	SELECT 
 		COUNT(DISTINCT fullvisitorid) AS col_before_change,
@@ -81,10 +84,14 @@ SELECT col_before_change, col_after_change,
 		ELSE 'Conversion Unacceptable'
 	END AS is_conversion_allowed
 FROM column_change;
--- Reformat fullvisitorid in tables analytics and all_sessions:
+```
+
+- Reformat fullvisitorid in tables analytics and all_sessions:
+```
 ALTER TABLE talbe_name
 ALTER COLUMN fullvisitorid TYPE bigint
 USING CAST(fullvisitorid/10000000 AS bigint);
+```
 
 -- Change the visitstarttime column from unix epoch to a timestamp
 ALTER TABLE analytics
