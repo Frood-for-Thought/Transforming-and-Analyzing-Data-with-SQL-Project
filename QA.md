@@ -6,12 +6,12 @@ two tables still have duplicate values, the reason for this are described below 
 Challenges and Future Goals in README.
 
 THE FOLLOWING RISK AREAS ARE LISTED UNDER FUTURE GOALS IN README.
-Product_information still has a lot of duplicate rows for product_sku to be a primary key,
+- Product_information still has a lot of duplicate rows for product_sku to be a primary key,
 it still requires a lot of work to filter through all the productnames and productcategory values.
 Also filtering down the productnames may could cause a loss in information, such as brand names.
-More time is needed to go through the product_information table before product_sku can be a primary key.
+- More time is needed to go through the product_information table before product_sku can be a primary key.
 However, the tables products, sales_report, and sales_by_sku can now be removed because all the infomation is preserved in product_information.
-The order details are removed from product_information are now in the table product_order with product_sku being the primary key.
+- The order details are removed from product_information are now in the table product_order with product_sku being the primary key.
 
 The main takeaway from Question 2 of starting_with_data, is that there are a lot of countries and cities unaccounted for
 across the globe, and more data gathering needs to be done to match the fullvisitorid with the country and city.
@@ -28,7 +28,7 @@ The webpage time, productsku, pagetitle, and pagepathlevel1 also needs to be cle
 with the table's own primary key.
 
 
-QA Process:
+## QA Process:
 Describe your QA process and include the SQL queries used to execute it.
 
 - When importing data, in order for the process to succeed, all columns with characters needed to have appropriate lengths.
@@ -39,7 +39,8 @@ Describe your QA process and include the SQL queries used to execute it.
 
 - Go through Data Validation for each table.
 
--- In pgAdmin, list the column names, data types, character max length or number precision, if column is nullable, and if it is updateable.
+- In pgAdmin, list the column names, data types, character max length or number precision, if column is nullable, and if it is updateable.
+```
 SELECT table_name, column_name, ordinal_position, data_type, 
 	CASE 
 		WHEN LOWER(data_type) LIKE '%character%'
@@ -50,6 +51,7 @@ SELECT table_name, column_name, ordinal_position, data_type,
 FROM information_schema.columns
 WHERE table_schema = 'public'
 ORDER BY table_name, ordinal_position;
+```
 
 - First the column data types needed to be matched to the quality of data they held
 
