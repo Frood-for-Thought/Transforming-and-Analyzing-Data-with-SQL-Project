@@ -95,18 +95,16 @@ ALTER COLUMN fullvisitorid TYPE bigint
 USING CAST(fullvisitorid/10000000 AS bigint);
 ```
 
--- Change the visitstarttime column from unix epoch to a timestamp
+- Change the visitstarttime column from unix epoch to a timestamp:
+```
 ALTER TABLE analytics
 ALTER COLUMN visitstarttime TYPE timestamp
 USING TO_TIMESTAMP(visitstarttime);
+```
 
---
--- The following query shows there are unique values in sales_by_sku which are not in the tables products or sales_report.
--- The table should not be deleted because of this but it should be deleted after preserving those values.
--- This one-to-one table seems redundant and everything could be placed into the sales_report table.
--- Products should get a unique products key and not the sku column, while sales_report should get a sales key.
--- In this case, for now sales_report can have productsku as its primary key which link to all_sessions productsku
--- as a foreign key.
+- The following query shows there are unique values in sales_by_sku which are not in the tables products or sales_report. The table should not be deleted because of this but it should be deleted after preserving those values. This one-to-one table seems redundant and everything could be placed into the sales_report table.  Products should get a unique products key and not the sku column, while sales_report should get a sales key.
+- In this case, for now sales_report can have productsku as its primary key which link to all_sessions productsku as a foreign key:
+```
 SELECT sbs.productsku, sbs.total_ordered
 FROM products as pro
 RIGHT JOIN sales_by_sku as sbs
@@ -114,16 +112,19 @@ RIGHT JOIN sales_by_sku as sbs
 LEFT JOIN sales_report as sr
 	USING(productsku)
 WHERE pro.sku is null AND sr.productsku IS NULL;
+```
 
--- the character limit in all the sku columns was shortened to 20.
+- the character limit in all the sku columns was shortened to 20.
 
--- v2productname can be shortened to 100 characters.
+- v2productname can be shortened to 100 characters:
+```
 SELECT COUNT(v2productname)
 FROM all_sessions
 WHERE LENGTH(v2productname) > 100;
+```
 
--- Reveiwing the format of v2productname to make sure they are capitalized at the start
--- or start with a number.  The remaining products start with two capitals.
+- Reveiwing the format of v2productname to make sure they are capitalized at the start or start with a number.  The remaining products start with two capitals.
+```
 SELECT v2productname, COUNT(v2productname)
 FROM all_sessions
 GROUP BY v2productname
@@ -151,21 +152,26 @@ WITH count_table AS (
 	)
 SELECT SUM(number_of_products)
 FROM count_table;
+```
 
--- The following query shows there are no location with cities without countries in all_sessions.
+- The following query shows there are no location with cities without countries in all_sessions:
+```
 SELECT visitid, country, city, totaltransactionrevenue
 FROM all_sessions
 WHERE country IS NULL AND city IS NOT NULL;
+```
 
-
--- All_sessions contains more product name details per productsku than products.
+- All_sessions contains more product name details per productsku than products:
+```
 SELECT COUNT(DISTINCT productsku), COUNT(DISTINCT v2productname)
 FROM all_sessions;
 SELECT COUNT(DISTINCT sku), COUNT(DISTINCT name)
 FROM products;
+```
 
--- Combine the information from tables products, sales_by_sku, and sales_report.
--- The CTE combines information from the products table and the product names from all_sessions.
+- Combine the information from tables products, sales_by_sku, and sales_report.
+ The CTE combines information from the products table and the product names from all_sessions:
+```
 WITH product_sku_names_cat_list AS (
 	SELECT
 		CASE
@@ -185,8 +191,9 @@ WITH product_sku_names_cat_list AS (
 	FULL OUTER JOIN products AS pro
 		ON alls.productsku = pro.sku
 	),
--- Combine all the tables to make one product table with all the information including the
--- distinct skus in sales_by_product.
+```
+- Combine all the tables to make one product table with all the information including the distinct skus in sales_by_product:
+```
 product_information2 AS (
 	SELECT DISTINCT
 		CASE
@@ -209,11 +216,13 @@ product_information2 AS (
 	JOIN all_sessions AS alls
 	ON psncl.product_sku = alls.productsku
 	)
--- Put all the information from products, sales_by_sku, and sales_report 
--- into the table product_information to get rid of redundant information.
--- INSERT INTO product_information
--- SELECT *
--- FROM product_information2;
+```
+- Put all the information from products, sales_by_sku, and sales_report into the table product_information to get rid of redundant information:
+```
+INSERT INTO product_information
+SELECT *
+FROM product_information2;
+```
 
 -- Product_information still has a lot of duplicate rows for product_sku to be a primary key,
 -- it still requires a lot of work to filter through all the productnames and productcategory values.
