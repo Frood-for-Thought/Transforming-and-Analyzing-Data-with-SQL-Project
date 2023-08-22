@@ -197,36 +197,25 @@ AND city IS NOT NULL
 ORDER BY city_revenue DESC;
 ```
 
-Answer:
+### Answer:
 
-Compared to questions 1 and 5 in starting_with_questions, now 99.10% of the revenue is going to countries which are
-not listed and given a NULL category.
+Compared to questions 1 and 5 in starting_with_questions, now 99.10% of the revenue is going to countries which are not listed and given a NULL category.
 
-In question 1 and 5 there were a total of 5 countries recorded which did not contain NULL values, now with
-approximating the revenue per transaction in the analytics table, it has increased to 14 countries.
-These countries have even less percent of the revenue generated than compared to questions 1 and 5 because now 
-there is more revenue going to countries without a category and labelled NULL.
+In question 1 and 5 there were a total of 5 countries recorded which did not contain NULL values, now with approximating the revenue per transaction in the analytics table, it has increased to 14 countries.  These countries have even less percent of the revenue generated than compared to questions 1 and 5 because now there is more revenue going to countries without a category and labelled NULL.
 
-The country with the highest transaction revenue is still the United States but instead of 205475.11 found in 
-question 1 in starting_with_questions, the revenue is now 20199.42.  While the approximate tax is not exact in question 1
-for starting_with_data, it may give a more accurate summery over how the revenue is distributed between countries.
+The country with the highest transaction revenue is still the United States but instead of 205475.11 found in question 1 in starting_with_questions, the revenue is now 20199.42.  While the approximate tax is not exact in question 1 for starting_with_data, it may give a more accurate summery over how the revenue is distributed between countries.
 
-Compared to question 1 and 5, there is now 32 cities recorded instead of 19.  Of the categories with cities and countries which
-are not including missing values, the city with the most revenue generated is Sunnyvale, with 51.75% of the revenue.  
+Compared to question 1 and 5, there is now 32 cities recorded instead of 19.  Of the categories with cities and countries which are not including missing values, the city with the most revenue generated is Sunnyvale, with 51.75% of the revenue.  
 Unlike question 5 in starting_with_questions, San Francisco is now 2nd instead of 
-1st with 8.97%% of the revenue generated.  
-Detroit is last with 0.012% of the revenue accounted for.
+1st with 8.97%% of the revenue generated.  Detroit is last with 0.012% of the revenue accounted for.
 
-It is important to note that even with an approximation to broaden the amount of countries and cities collected, there is still
-a lot of missing data.  More records should be gathered to find 99.10% of the revenue going to other countries in order for there
-to be a more accurate accounting going on in other cities.
+It is important to note that even with an approximation to broaden the amount of countries and cities collected, there is still a lot of missing data.  More records should be gathered to find 99.10% of the revenue going to other countries in order for there to be a more accurate accounting going on in other cities.
 
+## Question 3: What are the total number of distinct visitorid's and fullvisitorid's in the tables all_sessions and analytics?
 
+### SQL Queries:
 
-Question 3: What are the total number of distinct visitorid's and fullvisitorid's in the tables all_sessions and analytics?
-
-SQL Queries:
-
+```
 -- Find the number of unique visitid and fullvisitorid in both the all_sessions and analytics tables,
 -- as well as the total number of unique values between the two tables.
 -- Row 1 is all_sessions, row 2 is analytics.
@@ -248,31 +237,24 @@ SELECT COUNT(DISTINCT visitid) AS total_distinct_visitid
 FROM analytics AS an
 FULL OUTER JOIN all_sessions AS alls
 USING(visitid);
+```
 
-Answer:
-There are 14223 distinct fullvisitorid's in the all_sessions table and 120018 distinct in the analytics table.
-Between the two tables there are 130345 distinct fullvisitorid's which is less than 134241 added between the two tables.
-Therefore each table contains unique fullvisitorid's so care should be made when creating a primary key.
+### Answer:
+There are 14223 distinct fullvisitorid's in the all_sessions table and 120018 distinct in the analytics table. Between the two tables there are 130345 distinct fullvisitorid's which is less than 134241 added between the two tables. Therefore each table contains unique fullvisitorid's so care should be made when creating a primary key.
 
-There are 14556 distinct visitid's in the all_sessions table and 148642 distinct in the analytics table.
-Between the two tables there are 159538 distinct visitid's which is less than 163198 added between the two tables.
-Like fullvisitorid's, each table contains unique visitid's so care should be made when creating a primary key using visitid.
+There are 14556 distinct visitid's in the all_sessions table and 148642 distinct in the analytics table. Between the two tables there are 159538 distinct visitid's which is less than 163198 added between the two tables. Like fullvisitorid's, each table contains unique visitid's so care should be made when creating a primary key using visitid.
 
-It makes sense that there would be more visitid's than fullvisitorid's because people would visit multiple sites.
-Now new_analytics contains all distinct visitid and fullvisitorid values.
+It makes sense that there would be more visitid's than fullvisitorid's because people would visit multiple sites. Now new_analytics contains all distinct visitid and fullvisitorid values.
 
-SELECT count(distinct visitid), count(distinct fullvisitorid)
+- SELECT count(distinct visitid), count(distinct fullvisitorid)
 FROM new_analytics;
--- Shows 159538 and 130345
+- Shows 159538 and 130345
 
+## Question 4: What is the total amount of pageviews per country/city, is there a correlation with the start time?
 
+### SQL Queries:
 
-Question 4: 
-
-What is the total amount of pageviews per country/city, is there a correlation with the start time?
-
-SQL Queries:
-
+```
 -- Calculate the total number of pageviews per fullvisitorid.
 WITH fullvisitor_pageviews AS (
 	SELECT fullvisitorid, SUM(pageviews) AS totalpageviews
@@ -303,30 +285,21 @@ FROM country_city_time_views
 WHERE country IS NOT NULL
 GROUP BY country
 ORDER BY SUM(pageviews) DESC, AVG(time) DESC;
+```
 
-Answer:
+### Answer:
 
-The country with the maximum number of pageviews is the United States with 96923, while the average local start time is 14:05:13.
-There was no correlation with start time and pageviews, (p-value > 0.05 using regression analysis).
-The second highest was China with 2906.
+The country with the maximum number of pageviews is the United States with 96923, while the average local start time is 14:05:13. There was no correlation with start time and pageviews, (p-value > 0.05 using regression analysis). The second highest was China with 2906.
 
+Compared to question 2, Mountain View has the most traffic, with 10246 pageviews, however, it looks like Sunnyvale has generated more revenue with fewer pageviews, being 8207.
 
-Compared to question 2, Mountain View has the most traffic, with 10246 pageviews, however, it looks like Sunnyvale has
-generated more revenue with fewer pageviews, being 8207.
+What should be noted, is that there were 265 cities with pageviews, however, only 32 cities were recorded to make purchases. Most pageviews go to cities unaccounted for, with 56214 being NULL.
 
-What should be noted, is that there were 265 cities with pageviews, however, only 32 cities were recorded to make purchases.
-Most pageviews go to cities unaccounted for, with 56214 being NULL.
+## Question 5: What are the general products viewed by each visitor, and what percentage of fullvisitorid's have a recorded purchase?
 
+### SQL Queries:
 
-
-
-Question 5: What are the general products viewed by each visitor, and what percentage of fullvisitorid's have a recorded purchase?
-
-
-
-SQL Queries:
-
-
+```
 -- THIS SECTION IS THE APPROXIMATE REVENUE GENERATED FROM QUESTION 1
 WITH id_rev_tax AS (
 	SELECT visitid, revenue, unit_price, 
@@ -404,7 +377,9 @@ ON na.visitid = vur.visitid
 -- SELECT COUNT(DISTINCT fullvisitorid)
 -- FROM visitor_id_location_purchase
 -- WHERE revenue > 0;
+```
 
+```
 -- GO THROUGH THE PRODUCT NAME FILTER USED IN QUESTION 4 IN starting_with_questions.
 visitor_visit_country_city_product AS (
 	SELECT fullvisitorid, visitid, country, city,
@@ -513,25 +488,20 @@ SELECT DISTINCT productname, COUNT(fullvisitorid) AS visitorviews
 FROM visitor_visit_country_city_product
 GROUP BY productname
 ORDER BY COUNT(fullvisitorid) DESC;
+```
 
+### Answer:
 
-Answer:
-
-There are multiple trasaction revenues per visitid.  Unique visitid's can have multiple values for units_sold, unit_price, and revenue.
-More work needs to go into gathering data to determine if there are multiple orders per visit or if a lot of the information is redundant.
-From the data gathered, fullvisitorid's are making multiple purchases of the same product during the same visitid or during multiple visits,
-based on different order quantities, unit_prices, revenue generated, and multiple visitid's for the same product.
+There are multiple trasaction revenues per visitid.  Unique visitid's can have multiple values for units_sold, unit_price, and revenue. More work needs to go into gathering data to determine if there are multiple orders per visit or if a lot of the information is redundant. From the data gathered, fullvisitorid's are making multiple purchases of the same product during the same visitid or during multiple visits, based on different order quantities, unit_prices, revenue generated, and multiple visitid's for the same product.
 
 The product type viewed by most visitors are sweaters with 529 times.
 
 Taken from the previous questions:
-The most popular product sold overall are 'Yoga Supplies' being ordered in the United States.  
-The next popular supplies after that were umbrellas.    
-Despite generating the most revenue, most pageviews were on the sweater.  
 
-Sweater products were the most popular in 73 countries while yoga supplies were the second most popular, being 16 countries.  
-It looks like most purchases for yoga supplies are being made in the United States, while other products are being viewed in other countries.  
-Since a lot of revenue is unaccounted for in other countries, visitor views could be gauge for what items are popular to purchase.
+- The most popular product sold overall are 'Yoga Supplies' being ordered in the United States.
+- The next popular supplies after that were umbrellas.    
+- Despite generating the most revenue, most pageviews were on the sweater.  
 
-Including the approximation, there were 463 distinct fullvisitorid's in new_analytics and all_sessions which made a purchase on the site.  
-That's 0.35% when compared to 130345 ids in question 3.
+Sweater products were the most popular in 73 countries while yoga supplies were the second most popular, being 16 countries.  It looks like most purchases for yoga supplies are being made in the United States, while other products are being viewed in other countries.   Since a lot of revenue is unaccounted for in other countries, visitor views could be gauge for what items are popular to purchase.
+
+Including the approximation, there were 463 distinct fullvisitorid's in new_analytics and all_sessions which made a purchase on the site. That's 0.35% when compared to 130345 ids in question 3.
