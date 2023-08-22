@@ -62,20 +62,16 @@ AND an.units_sold = vmr.units_sold
 ORDER BY visitid;
 ```
 
-Answer:  
-
+### Answer:  
 Now 39948 distinct rows have filled in missing revenue values in the analytics table.
 These values should only be used for an approximation of the data and not replace missing NULL values
 in the revenue column in the analytics table.
 
+## Question 2: Answer questions 1 and 5 again from starting_with_questions but this time use the approximate missing revenue values calculated in starting_with_data question 1.
 
+### SQL Queries:
 
-Question 2: Answer questions 1 and 5 again from starting_with_questions but this time use the approximate
-missing revenue values calculated in starting_with_data question 1.
-
-
-SQL Queries:
-
+```
 -- There are NO locations where revenue is not null and units_sold is null.
 -- Using the locations with units_sold and revenue, find the average tax that would be placed one revenue.
 -- Then use the average tax generated per units sold and unit price to approximate the revenue gained when the value is NULL.
@@ -100,7 +96,9 @@ avg_tax_per_unit AS (
 -- SELECT *
 -- FROM avg_tax_per_unit
 -- ORDER BY units_sold, unit_price;
+```
 
+```
 -- This CTE now finds an approximation for the revenue gained using the avg_tax_per_unit_sold_with_price.
 -- This is now a revenue value to fill is the sections in the analytics tabel where it is NULL.
 visitid_missing_revenue AS (
@@ -117,8 +115,9 @@ visitid_missing_revenue AS (
 -- SELECT *
 -- FROM visitid_missing_revenue
 -- ORDER BY revenue DESC;
+```
 
-
+```
 -- Now missing revenue values have an approximate value added.
 analytics_apprixmate_revenue_values AS (
 	SELECT DISTINCT an.visitid, an.fullvisitorid, an.units_sold, an.unit_price, 
@@ -139,7 +138,9 @@ analytics_apprixmate_revenue_values AS (
 	),
 -- SELECT *
 -- FROM analytics_apprixmate_revenue_values;
+```
 
+```
 -- Make a CTE to assign a country and city to fullvisitorid with visitid
 fullvisitorid_country AS (
 	SELECT DISTINCT fullvisitorid, country, city, visitid, totaltransactionrevenue
@@ -194,7 +195,7 @@ FROM country_city_rev_sum
 WHERE city_revenue IS NOT NULL
 AND city IS NOT NULL
 ORDER BY city_revenue DESC;
-
+```
 
 Answer:
 
