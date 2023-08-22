@@ -1,9 +1,8 @@
 ## Question 1:  Using the locations with units_sold and revenue, find the average tax that would be placed on revenue in the analytics table.  Then use the average tax generated per units sold and unit price to approximate the revenue gained when the value in the revenue column is NULL.
 
-SQL Queries: 
-
+### SQL Queries: 
+```
 -- There are NO locations where revenue is not null and units_sold is null.
--- 
 WITH id_rev_tax AS (
 	SELECT visitid, revenue, unit_price, 
 		units_sold, 
@@ -26,8 +25,10 @@ avg_tax_per_unit AS (
 -- SELECT *
 -- FROM avg_tax_per_unit
 -- ORDER BY units_sold, unit_price;
+```
 
--- This CTE now caluclates an approximation for the revenue gained using the avg_tax_per_unit_sold_with_price.
+```
+-- This CTE now caluclates an approximation for the revenue gained using the avg_tax_per_unit_sold_with_price.  
 -- This is now a revenue value to fill in the sections in the analytics table where revenue is NULL.
 visitid_missing_revenue AS (
 	SELECT DISTINCT visitid, an.units_sold, an.unit_price,  
@@ -59,6 +60,7 @@ AND an.revenue IS NULL
 AND an.unit_price = vmr.unit_price
 AND an.units_sold = vmr.units_sold
 ORDER BY visitid;
+```
 
 Answer:  
 
