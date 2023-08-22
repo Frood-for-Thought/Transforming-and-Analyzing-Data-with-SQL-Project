@@ -1,6 +1,4 @@
-Question 1:  Using the locations with units_sold and revenue, find the average tax that would be placed on revenue in the analytics table.
-Then use the average tax generated per units sold and unit price to approximate the revenue gained when the value 
-in the revenue column is NULL.
+## Question 1:  Using the locations with units_sold and revenue, find the average tax that would be placed on revenue in the analytics table.  Then use the average tax generated per units sold and unit price to approximate the revenue gained when the value in the revenue column is NULL.
 
 SQL Queries: 
 
