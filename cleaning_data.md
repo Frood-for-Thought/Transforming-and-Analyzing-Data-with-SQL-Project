@@ -81,11 +81,14 @@
 
 ## Queries:
 
--Divide the unit price by 1000000
+-Divide the unit price by 1000000:
+```
 UPDATE analytics
 SET unit_price = unit_price/1000000
+```
 
--- Check if the visitstarttime timestamp and date columns have mismatching dates.
+- Check if the visitstarttime timestamp and date columns have mismatching dates:
+```
 SELECT COUNT(*)
 from analytics
 WHERE DATE(TO_TIMESTAMP(visitstarttime)) <> date
@@ -95,29 +98,29 @@ WHERE DATE(TO_TIMESTAMP(visitstarttime)) <> date
 ALTER TABLE analytics
 ALTER COLUMN date TYPE date
 USING CAST(visitstarttime AS DATE);
+```
 
--- The date in all_sessions also has the same error as analytics.
+- The date in all_sessions also has the same error as analytics:
+```
 SELECT (an.date - allse.date) as time_difference, *
 FROM analytics AS an
 FULL OUTER JOIN all_sessions AS allse
 USING(visitid)
 WHERE an.date <> allse.date
 AND (an.date - allse.date) > 1;
+```
 
--- A new table "all_sessions_date_time" was created to preserve all_sessions,
--- with the columns: fullvisitorid, visitid, date, time.
--- The query shows that the there is either a fullvisitorid or visitid which the date
--- or time can match up to because it comes back empty:
+- A new table "all_sessions_date_time" was created to preserve all_sessions, with the columns: fullvisitorid, visitid, date, time.
+- The query shows that the there is either a fullvisitorid or visitid which the date or time can match up to because it comes back empty:
+```
 SELECT *
 FROM all_sessions
 WHERE fullvisitorid IS NULL
 AND visitid IS NULL;
+```
 
--- The date and time in all_sessions could be due to an error between time zones.
--- However even with adding the time to date in the all_sessions column, it
--- still does not match up well with visitstarttime in analytics.
--- The query may shows that date and time could have been recorded in one 
--- timezone while the timestamp in the analytics table is recorded in distinct time zones.
+- The date and time in all_sessions could be due to an error between time zones. However even with adding the time to date in the all_sessions column, it still does not match up well with visitstarttime in analytics. The query may show that date and time could have been recorded in one timezone while the timestamp in the analytics table is recorded in distinct time zones:
+```
 SELECT asdt.date, MAKE_INTERVAL(secs => asdt.time) AS time, an.visitstarttime, 
 	(MAKE_INTERVAL(secs => asdt.time) + asdt.date)::DATE AS all_sessions_new_date
 FROM all_sessions_date_time AS asdt
@@ -152,8 +155,10 @@ SELECT visitid_date_table.visitid, visitid_date_table.date
 FROM visitid_date_table;
 -- The dates from the all_sessions table can be removed now that they are preserved in visitid_values table.
 ALTER TABLE all_sessions DROP COLUMN date;
+```
 
--- The units_sold value needs to be an integer and the column has negative values.
+- The units_sold value needs to be an integer and the column has negative values:
+```
 ALTER TABLE analytics ALTER units_sold TYPE int;
 SELECT DISTINCT units_sold
 FROM analytics
@@ -166,11 +171,14 @@ WHERE units_sold < 0;
 SELECT units_sold
 FROM analytics
 WHERE units_sold < 0;
+```
 
--- The pageviews need to be converted to an int.
+- The pageviews need to be converted to an int:
+```
 SELECT DISTINCT pageviews
 FROM analytics;
 ALTER TABLE analytics ALTER pageviews TYPE int;
+```
 
 -- The transactionrevenue column is redundant and all the information in totaltransactionrevenue.
 -- The data is preserved in totaltransactionrevenue after removing the transactionrevenue column.
