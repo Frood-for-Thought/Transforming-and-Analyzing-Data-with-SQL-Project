@@ -338,45 +338,52 @@ WHERE sentimentscore BETWEEN 0 AND 100
 OR sentimentscore IS NULL;
 ```
 
--- Remove leading spaces in sales_report.name using trim.
+- Remove leading spaces in sales_report.name using trim:
+```
 UPDATE sales_report
 SET name = TRIM(name);
 -- sentimentscore in sales_report was altered the same method used in the products table.
 UPDATE sales_report
 SET sentimentscore = (ROUND(sentimentscore*100)+100)/2;
 ALTER TABLE sales_report ALTER sentimentscore TYPE int;
+```
 
--- Remove (not set) from column country in table all_sessions.
+- Remove (not set) from column country in table all_sessions:
+```
 UPDATE all_sessions
 SET country = NULL
 WHERE LOWER(country) LIKE '%(not set)%';
+```
 
--- restockingleadtime in the sales_report table was converted to a days interval.
+- restockingleadtime in the sales_report table was converted to a days interval:
+```
 ALTER TABLE sales_report
 ALTER COLUMN restockingleadtime TYPE interval
 USING MAKE_INTERVAL(Days => restockingleadtime);
+```
 
--- divide revenue by 1000000.
+- divide revenue by 1000000:
+```
 UPDATE analytics
 SET revenue = revenue/1000000;
+```
 
--- Corrected city names and their locations, set city to country.
--- London, US may mean London, Ohio.
--- Paris, United States may mean Paris, TX.
--- There is a Toronto and Vancouver in the United States.
--- Set 'New York' to 'United States'.
--- There is an Amsterdam in the United States.
-
-
-
--- Find cities which have more than one distinct country.  In some cases this could be true.
+- Corrected city names and their locations, set city to country.
+- London, US may mean London, Ohio.
+- Paris, United States may mean Paris, TX.
+- There is a Toronto and Vancouver in the United States.
+- Set 'New York' to 'United States'.
+- There is an Amsterdam in the United States.
+- Find cities which have more than one distinct country.  In some cases this could be true:
+```
 SELECT city, COUNT(DISTINCT country)
 FROM all_sessions
 GROUP BY city
 HAVING COUNT(DISTINCT country) > 1
 AND city IS NOT NULL;
--- Corrected city names and their locations, set city to country.
--- This query is used to list which countries the city appeared in to cross reference if there is one.
+```
+- Corrected city names and their locations, set city to country. This query is used to list which countries the city appeared in to cross reference if there is one:
+```
 SELECT DISTINCT country, city
 FROM all_sessions
 WHERE city LIKE 'city_name';
@@ -384,8 +391,10 @@ WHERE city LIKE 'city_name';
 UPDATE all_sessions
 SET country = 'country_name'
 WHERE city LIKE 'city_name';
+```
 
--- Fix fullvisitorid's and fill in NULL information if there are missing cities or there are two countries per single id.
+- Fix fullvisitorid's and fill in NULL information if there are missing cities or there are two countries per single id:
+```
 WITH visitor_city_country AS (
 	SELECT DISTINCT fullvisitorid, country, city
 	FROM all_sessions
@@ -398,14 +407,12 @@ HAVING count(*) > 1;
 UPDATE all_sessions
 SET city = _
 WHERE fullvisitorid = _;
+```
 
--- searchkeyword has no information and was removed.
-
--- Duplicate rows are removed from analytics.
--- Find the distinct visits where the units sold is NULL.  With this the unit price can be changed to NULL in order
--- to remove duplicate visitid rows.  If the units_sold is not NULL, then the rows are retained in order to preserve
--- a transaction record and possibly revenue values that are not NULL.
--- Query to make a new table new_analytics, which removes duplicate rows in the analytics table.
+- searchkeyword has no information and was removed.
+- Duplicate rows are removed from analytics. Find the distinct visits where the units sold is NULL.  With this the unit price can be changed to NULL in order to remove duplicate visitid rows.  If the units_sold is not NULL, then the rows are retained in order to preserve a transaction record and possibly revenue values that are not NULL.
+- Query to make a new table new_analytics, which removes duplicate rows in the analytics table:
+```
 WITH new_analytics1 AS (
 	SELECT DISTINCT 
 	visitnumber, visitid, visitstarttime, date, fullvisitorid, channelgrouping, socialengagementtype,
@@ -426,7 +433,10 @@ new_analytics2 AS (
 INSERT INTO new_analytics
 SELECT *
 FROM new_analytics2;
--- The values from visitid_values are put into new_analytics so now the table can be removed.
+```
+
+- The values from visitid_values are put into new_analytics so now the table can be removed:
+```
 WITH new_dates AS (
 	SELECT *
 	FROM new_analytics na
@@ -439,11 +449,14 @@ SET date = nd.visitid_date
 FROM new_dates AS nd
 WHERE na.visitid = nd.visitid
 AND na.fullvisitorid = nd.fullvisitorid;
+```
 
--- Update pageview in analytics.
+- Update pageview in analytics:
+```
 UPDATE new_analytics
 SET pageviews = alls.pageviews
 FROM all_sessions AS alls
 WHERE new_analytics.pageviews IS NULL;
+```
 
--- Spaces are removed in product_sku.
+- Spaces are removed in product_sku.
