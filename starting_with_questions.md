@@ -1,11 +1,10 @@
-Answer the following questions and provide the SQL queries used to find the answer.
+# Answer the following questions and provide the SQL queries used to find the answer.
 
-    
-**Question 1: Which cities and countries have the highest level of transaction revenues on the site?**
+## Question 1: Which cities and countries have the highest level of transaction revenues on the site?
 
+### SQL Queries:
 
-SQL Queries:
-
+```
 -- The CTE creates a column which defaults to the revenue of the analytics table, 
 -- or totaltransactionrevenue in all_sessions if the analytics value is NULL.
 -- It also gives values when the country column is not NULL.
@@ -44,20 +43,18 @@ country_city_rev_sum AS (
 -- WHERE city_revenue IS NOT NULL
 -- ORDER BY city_revenue DESC
 -- LIMIT 1;
+```
 
-Answer:
+## Answer:
 
 The country with the highest transaction revenue is the United States with 250813.56.
-The city with the highest transaction revenue is San Francisco, United States, with 1564.32,
-(not counting NULL as a city).
+The city with the highest transaction revenue is San Francisco, United States, with 1564.32, (not counting NULL as a city).
 
+## Question 2: What is the average number of products ordered from visitors in each city and country?
 
+### SQL Queries:
 
-**Question 2: What is the average number of products ordered from visitors in each city and country?**
-
-
-SQL Queries:
-
+```
 -- Come up with a list of order quantities corresponding to their sku.
 -- The CTE includes the sales_by_sku table due to QA showing unique values that are
 -- not in the products or sales_report table.
@@ -123,23 +120,18 @@ FROM country_city_order_quantity_with_analytics
 -- -- The following finds the city with the highest order quantity.
 -- WHERE city IS NOT NULL
 -- ORDER BY city_order_quantity DESC;
+```
 
-Answer:
-Including orders from the sales_by_sku and all_sessions, even analytics in case of NULL values,
-the country with the highest average order quantity is Vietnam,
-while the city with the highest order quantity is Dallas.
+### Answer:
+Including orders from the sales_by_sku and all_sessions, even analytics in case of NULL values, the country with the highest average order quantity is Vietnam, while the city with the highest order quantity is Dallas.
 
-The country with the highest order quantity is the United States with 5840.
-The city with the highest order quantity is Dallas with 1148, (not including NULL), followed by Dublin Ireland.
+The country with the highest order quantity is the United States with 5840. The city with the highest order quantity is Dallas with 1148, (not including NULL), followed by Dublin Ireland.
 
+## Question 3: Is there any pattern in the types (product categories) of products ordered from visitors in each city and country?
 
+### SQL Queries:
 
-
-**Question 3: Is there any pattern in the types (product categories) of products ordered from visitors in each city and country?**
-
-
-SQL Queries:
-
+```
 SELECT DISTINCT v2productcategory
 FROM all_sessions
 WHERE LOWER(v2productcategory) LIKE '%waze%';
@@ -185,7 +177,9 @@ WITH product_name_cat_list AS (
 -- SELECT *
 -- FROM product_name_cat_list
 -- WHERE v2productname IS NULL;
+```
 
+```
 -- Update the product_name_cat_list using the v2productname, 
 -- this CTE makes sure that every v2productname is assigned a product_category,
 -- based on the description of the product.
@@ -274,7 +268,9 @@ update_product_name_cat_list AS (
 -- -- Now every v2productname has a product_category and all product_categories are grouped together.
 -- SELECT *
 -- FROM update_product_name_cat_list;
+```
 
+```
 -- -- The CTE groups and orders the times a product category was ordered with each country.
 -- -- It also ranks the category of purchase based on the total amount of times the category is selected.
 -- country_cat_num AS (
@@ -292,14 +288,17 @@ update_product_name_cat_list AS (
 -- FROM country_cat_num
 -- WHERE cat_rank_per_country = 1
 -- ORDER BY product_num_per_country;
+```
 
+```
 -- -- This query takes the CTE above to show how many times each category appears for all the countries.
 -- SELECT DISTINCT	product_category, COUNT(country)
 -- FROM country_cat_num
 -- WHERE cat_rank_per_country = 1
 -- GROUP BY product_category;
+```
 
-
+```
 --  The CTE groups and orders the times a product category was ordered with each city.
 city_product_cat AS (
 	SELECT DISTINCT alls.city, upncl.product_category,
@@ -316,34 +315,30 @@ SELECT product_category, COUNT(city)
 FROM city_product_cat
 WHERE cat_rank_per_city = 1
 GROUP BY product_category;
+```
 
-Answer:
+### Answer:
 
-The most times a product category was ordered was in the united states and was a YouTube category with it being the most purchased at 653414 times, 
-followed by the Waze category at 451542 times.  The country with the least times a product category was ordered was Slovakia with Android being 
-ordered 1 time.  The most popular category for all the counties was YouTube, appearing on the top of the list for 114 countries, and
+The most times a product category was ordered was in the united states and was a YouTube category with it being the most purchased at 653414 times, followed by the Waze category at 451542 times.  The country with the least times a product category was ordered was Slovakia with Android being ordered 1 time.  The most popular category for all the counties was YouTube, appearing on the top of the list for 114 countries, and
 Google coming in second at 12 countries.
 
-The most times a product category was ordered in a city was in Mountain View, (not including NULL in the answer), with the category being YouTube,
-and the number of times it was purchased being 73671.  Waze was second, with 62140, even though it doesn't appear first in any cities.
-When dealing with sponsored product categories, Youtube showed up the most with it being the most popular category in 132 cities, 
-followed by Google with 16.
+The most times a product category was ordered in a city was in Mountain View, (not including NULL in the answer), with the category being YouTube, and the number of times it was purchased being 73671.  Waze was second, with 62140, even though it doesn't appear first in any cities. When dealing with sponsored product categories, Youtube showed up the most with it being the most popular category in 132 cities, followed by Google with 16.
 
 Without taking sponsored brand names, the catagory that was most popular was Office supplies.
 
+## Question 4: What is the top-selling product from each city/country? Can we find any pattern worthy of noting in the products sold?
 
+### SQL Queries:
 
-**Question 4: What is the top-selling product from each city/country? Can we find any pattern worthy of noting in the products sold?**
-
-
-SQL Queries:
-
+```
 -- All_sessions contains more product name details per productsku than products.
 SELECT COUNT(DISTINCT productsku), COUNT(DISTINCT v2productname)
 FROM all_sessions;
 SELECT COUNT(DISTINCT sku), COUNT(DISTINCT name)
 FROM products;
+```
 
+```
 -- Merge all the product names from products and all_sessions
 WITH product_sku_names_cat_list AS (
 	SELECT 
@@ -486,7 +481,9 @@ WITH product_name_list AS (
 	),
 -- SELECT DISTINCT *
 -- FROM product_name_list;
+```
 
+```
 -- CTE to count the products sold per country and list them with a ranking
 country_pro_num_rank AS(
 	SELECT DISTINCT alls.country, pnl.products,
@@ -504,7 +501,9 @@ SELECT DISTINCT products, COUNT(country)
 FROM country_pro_num_rank
 WHERE pro_rank_per_country = 1
 GROUP BY products;
+```
 
+```
 -- --  The CTE groups and orders the times a product was ordered with each city.
 -- city_product AS (
 -- 	SELECT DISTINCT alls.city, pnl.products,
@@ -525,28 +524,23 @@ GROUP BY products;
 -- FROM city_product
 -- WHERE pro_rank_per_city = 1
 -- GROUP BY products;
+```
 
-Answer:
+### Answer:
 
-The most popular product sold overall are 'Yoga Supplies' being ordered 589784 in the United States.  The next popular supplies after that
-were umbrellas, being sold 588886 times.  
+The most popular product sold overall are 'Yoga Supplies' being ordered 589784 in the United States.  The next popular supplies after that were umbrellas, being sold 588886 times.  
 
 However, sweater products were the most popular in 73 countries while yoga supplies were the second most popular, being 16 countries.
   
-When not ordering the products sold by editing and grouping the original names, the most popular item was 
-YouTube Wool Heather Cap Heather/Black being the most popular in 30 countries.  This is followed with YouTube Youth Short Sleeve Tee Red,
-and YouTube Twill Cap being the most popular in 17 countries.  When not grouping the names of the orders sold, the most popular item
-sold per country was YouTube Youth Short Sleeve Tee Red with it being 653414 times sold in the United States.
+When not ordering the products sold by editing and grouping the original names, the most popular item was  YouTube Wool Heather Cap Heather/Black being the most popular in 30 countries.  This is followed with YouTube Youth Short Sleeve Tee Red, and YouTube Twill Cap being the most popular in 17 countries.  When not grouping the names of the orders sold, the most popular item sold per country was YouTube Youth Short Sleeve Tee Red with it being 653414 times sold in the United States.
 
-Sweaters were the most popular in the most cities with 68 cities, while Yoga Supplies came second, being the most popular in 13 cities.
-Like with countries, Yoga Supplies were the most ordered with 73902 in Mountain View.
+Sweaters were the most popular in the most cities with 68 cities, while Yoga Supplies came second, being the most popular in 13 cities. Like with countries, Yoga Supplies were the most ordered with 73902 in Mountain View.
 
+## Question 5: Can we summarize the impact of revenue generated from each city/country?
 
+### SQL Queries:
 
-**Question 5: Can we summarize the impact of revenue generated from each city/country?**
-
-SQL Queries:
-
+```
 -- The CTE creates a column which defaults to the revenue of the analytics table, 
 -- or totaltransactionrevenue in all_sessions if the analytics value is NULL.
 -- It also gives values when the country column is not NULL.
@@ -583,27 +577,21 @@ country_city_rev_sum AS (
 -- FROM country_city_rev_sum
 -- WHERE country_revenue IS NOT NULL
 -- ORDER BY country_revenue DESC;
+```
 
+```
 -- This query finds the city with its country with the highest level of transaction revenue on the site,
 -- and compares it as a percentage to the overall revenue generated.
 SELECT DISTINCT country, city, city_revenue AS revenue, (city_revenue/total_overall_revenue)*100 as percent_total_revenue
 FROM country_city_rev_sum
 WHERE city_revenue IS NOT NULL
 ORDER BY city_revenue DESC;
+```
 
-Answer:
+### Answer:
 
-From the records which takes into account countries which are not null, it appears United States has 13098.16 of total revenue generated.
-This accounts for 92.52% of all the revenue generated per country.  The next is Israel with 4.25%, then Australia with 2.53%.
+From the records which takes into account countries which are not null, it appears United States has 13098.16 of total revenue generated. This accounts for 92.52% of all the revenue generated per country.  The next is Israel with 4.25%, then Australia with 2.53%.
 
-The city with the most revenue generated is San Francisco, United States, with 1564.32 which is 11.05% of the total revenue, 
-(in this case the total revenue from all the non-NULL countries, which includes unrecorded cities with NULL).  
-The next city being Sunnyvale, with 992.23 generated, and it being 7.01% of the revenue generated, followed by
-Atlanta with 854.44 and 6.04% revenue generated.  
-The three lowest were Zurich, Switzerland, with 0.096%, Columbus, United States, with 0.125%, and Houston, United States, with 0.221%.
-There was a total of 19 cities recorded which generated revenue.
-
-
-
-
-
+The city with the most revenue generated is San Francisco, United States, with 1564.32 which is 11.05% of the total revenue, (in this case the total revenue from all the non-NULL countries, which includes unrecorded cities with NULL).  
+The next city being Sunnyvale, with 992.23 generated, and it being 7.01% of the revenue generated, followed by Atlanta with 854.44 and 6.04% revenue generated.  
+The three lowest were Zurich, Switzerland, with 0.096%, Columbus, United States, with 0.125%, and Houston, United States, with 0.221%.  There was a total of 19 cities recorded which generated revenue.
